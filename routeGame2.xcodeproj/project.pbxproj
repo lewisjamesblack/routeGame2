@@ -7,14 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		755844431D65B71A00DCB1CB /* CharacterGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 755844421D65B71A00DCB1CB /* CharacterGridView.swift */; };
+		757E437D1D6F29BB00BA9904 /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = 757E437C1D6F29BB00BA9904 /* Route.swift */; };
 		75E8085C1D65A55A00A2F3B8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75E8085B1D65A55A00A2F3B8 /* AppDelegate.swift */; };
-		75E8085E1D65A55A00A2F3B8 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75E8085D1D65A55A00A2F3B8 /* ViewController.swift */; };
+		75E8085E1D65A55A00A2F3B8 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75E8085D1D65A55A00A2F3B8 /* GameViewController.swift */; };
 		75E808611D65A55A00A2F3B8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 75E8085F1D65A55A00A2F3B8 /* Main.storyboard */; };
 		75E808641D65A55A00A2F3B8 /* routeGame2.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 75E808621D65A55A00A2F3B8 /* routeGame2.xcdatamodeld */; };
 		75E808661D65A55A00A2F3B8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 75E808651D65A55A00A2F3B8 /* Assets.xcassets */; };
 		75E808691D65A55A00A2F3B8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 75E808671D65A55A00A2F3B8 /* LaunchScreen.storyboard */; };
 		75E808741D65A55B00A2F3B8 /* routeGame2Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75E808731D65A55B00A2F3B8 /* routeGame2Tests.swift */; };
 		75E8087F1D65A55B00A2F3B8 /* routeGame2UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75E8087E1D65A55B00A2F3B8 /* routeGame2UITests.swift */; };
+		75E808901D65A95300A2F3B8 /* LetterSquareView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 75E8088F1D65A95300A2F3B8 /* LetterSquareView.xib */; };
+		75E808921D65A9EC00A2F3B8 /* LetterSquareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75E808911D65A9EC00A2F3B8 /* LetterSquareView.swift */; };
+		75E808941D65AA4900A2F3B8 /* LetterTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75E808931D65AA4900A2F3B8 /* LetterTextView.swift */; };
+		75E808961D65B08300A2F3B8 /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75E808951D65B08300A2F3B8 /* Data.swift */; };
+		75E8089A1D65B11300A2F3B8 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75E808991D65B11300A2F3B8 /* Extensions.swift */; };
+		75E8089C1D65B13B00A2F3B8 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75E8089B1D65B13B00A2F3B8 /* Constants.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,9 +43,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		755844421D65B71A00DCB1CB /* CharacterGridView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacterGridView.swift; sourceTree = "<group>"; };
+		757E437C1D6F29BB00BA9904 /* Route.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Route.swift; sourceTree = "<group>"; };
 		75E808581D65A55A00A2F3B8 /* routeGame2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = routeGame2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		75E8085B1D65A55A00A2F3B8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		75E8085D1D65A55A00A2F3B8 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		75E8085D1D65A55A00A2F3B8 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		75E808601D65A55A00A2F3B8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		75E808631D65A55A00A2F3B8 /* routeGame2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = routeGame2.xcdatamodel; sourceTree = "<group>"; };
 		75E808651D65A55A00A2F3B8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -49,6 +59,12 @@
 		75E8087A1D65A55B00A2F3B8 /* routeGame2UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = routeGame2UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		75E8087E1D65A55B00A2F3B8 /* routeGame2UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = routeGame2UITests.swift; sourceTree = "<group>"; };
 		75E808801D65A55B00A2F3B8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		75E8088F1D65A95300A2F3B8 /* LetterSquareView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LetterSquareView.xib; sourceTree = "<group>"; };
+		75E808911D65A9EC00A2F3B8 /* LetterSquareView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LetterSquareView.swift; sourceTree = "<group>"; };
+		75E808931D65AA4900A2F3B8 /* LetterTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LetterTextView.swift; sourceTree = "<group>"; };
+		75E808951D65B08300A2F3B8 /* Data.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
+		75E808991D65B11300A2F3B8 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		75E8089B1D65B13B00A2F3B8 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,11 +115,11 @@
 		75E8085A1D65A55A00A2F3B8 /* routeGame2 */ = {
 			isa = PBXGroup;
 			children = (
+				75E8088C1D65A6A000A2F3B8 /* Model */,
+				75E8088D1D65A6A500A2F3B8 /* View */,
+				75E8088E1D65A6AA00A2F3B8 /* Controller */,
 				75E8085B1D65A55A00A2F3B8 /* AppDelegate.swift */,
-				75E8085D1D65A55A00A2F3B8 /* ViewController.swift */,
-				75E8085F1D65A55A00A2F3B8 /* Main.storyboard */,
 				75E808651D65A55A00A2F3B8 /* Assets.xcassets */,
-				75E808671D65A55A00A2F3B8 /* LaunchScreen.storyboard */,
 				75E8086A1D65A55A00A2F3B8 /* Info.plist */,
 				75E808621D65A55A00A2F3B8 /* routeGame2.xcdatamodeld */,
 			);
@@ -126,6 +142,38 @@
 				75E808801D65A55B00A2F3B8 /* Info.plist */,
 			);
 			path = routeGame2UITests;
+			sourceTree = "<group>";
+		};
+		75E8088C1D65A6A000A2F3B8 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				75E808951D65B08300A2F3B8 /* Data.swift */,
+				75E808991D65B11300A2F3B8 /* Extensions.swift */,
+				75E8089B1D65B13B00A2F3B8 /* Constants.swift */,
+				757E437C1D6F29BB00BA9904 /* Route.swift */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		75E8088D1D65A6A500A2F3B8 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				75E8085F1D65A55A00A2F3B8 /* Main.storyboard */,
+				75E808671D65A55A00A2F3B8 /* LaunchScreen.storyboard */,
+				75E8088F1D65A95300A2F3B8 /* LetterSquareView.xib */,
+				75E808911D65A9EC00A2F3B8 /* LetterSquareView.swift */,
+				75E808931D65AA4900A2F3B8 /* LetterTextView.swift */,
+				755844421D65B71A00DCB1CB /* CharacterGridView.swift */,
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
+		75E8088E1D65A6AA00A2F3B8 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				75E8085D1D65A55A00A2F3B8 /* GameViewController.swift */,
+			);
+			name = Controller;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -196,6 +244,7 @@
 				TargetAttributes = {
 					75E808571D65A55A00A2F3B8 = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = P9AW9Q3Z5G;
 					};
 					75E8086E1D65A55B00A2F3B8 = {
 						CreatedOnToolsVersion = 7.3.1;
@@ -233,6 +282,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				75E808691D65A55A00A2F3B8 /* LaunchScreen.storyboard in Resources */,
+				75E808901D65A95300A2F3B8 /* LetterSquareView.xib in Resources */,
 				75E808661D65A55A00A2F3B8 /* Assets.xcassets in Resources */,
 				75E808611D65A55A00A2F3B8 /* Main.storyboard in Resources */,
 			);
@@ -259,9 +309,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				75E808941D65AA4900A2F3B8 /* LetterTextView.swift in Sources */,
 				75E808641D65A55A00A2F3B8 /* routeGame2.xcdatamodeld in Sources */,
-				75E8085E1D65A55A00A2F3B8 /* ViewController.swift in Sources */,
+				75E808921D65A9EC00A2F3B8 /* LetterSquareView.swift in Sources */,
+				757E437D1D6F29BB00BA9904 /* Route.swift in Sources */,
+				75E808961D65B08300A2F3B8 /* Data.swift in Sources */,
+				75E8085E1D65A55A00A2F3B8 /* GameViewController.swift in Sources */,
 				75E8085C1D65A55A00A2F3B8 /* AppDelegate.swift in Sources */,
+				75E8089A1D65B11300A2F3B8 /* Extensions.swift in Sources */,
+				75E8089C1D65B13B00A2F3B8 /* Constants.swift in Sources */,
+				755844431D65B71A00DCB1CB /* CharacterGridView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -405,10 +462,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = routeGame2/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.lewisblack.routeGame2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -416,10 +476,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = routeGame2/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.lewisblack.routeGame2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};
@@ -488,6 +551,7 @@
 				75E808851D65A55B00A2F3B8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		75E808861D65A55B00A2F3B8 /* Build configuration list for PBXNativeTarget "routeGame2Tests" */ = {
 			isa = XCConfigurationList;
@@ -496,6 +560,7 @@
 				75E808881D65A55B00A2F3B8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		75E808891D65A55B00A2F3B8 /* Build configuration list for PBXNativeTarget "routeGame2UITests" */ = {
 			isa = XCConfigurationList;
@@ -504,6 +569,7 @@
 				75E8088B1D65A55B00A2F3B8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
