@@ -10,31 +10,18 @@ import UIKit
 
 class LetterSquareView: UIView {
     
-    //var isSelected:Bool
     var letter:String!
-    
-    @IBOutlet weak var topToLeft: UIView!
-    @IBOutlet weak var topToRight: UIView!
-    @IBOutlet weak var bottomToRight: UIView!
-    @IBOutlet weak var bottomToLeft: UIView!
-    @IBOutlet weak var horizontalTube: UIView!
-    @IBOutlet weak var verticalTube: UIView!
-    @IBOutlet weak var endFromLeft: UIView!
-    @IBOutlet weak var endFromRight: UIView!
-    @IBOutlet weak var endFromTop: UIView!
-    @IBOutlet weak var endFromBottom: UIView!
-    
-    @IBOutlet weak var topToLeftWhiteSpace: UIView!
-    @IBOutlet weak var topToRightWhiteSpace: UIView!
-    @IBOutlet weak var bottomToRightWhiteSpace: UIView!
-    @IBOutlet weak var bottomToLeftWhiteSpace: UIView!
+    var arrayOfViews: Array<UIView> = []
+    var newView:UIView
+    var lastColor:UIColor?
     
     @IBOutlet weak var letterSquareViewView: LetterSquareViewView!
     @IBOutlet var letterSquareView: UIView!
     @IBOutlet weak var letterLbl: UILabel!
     
     init(frame: CGRect, letter: String) {
-                
+        self.newView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
+        self.lastColor = nil
         super.init(frame: frame)
         
         NSBundle.mainBundle().loadNibNamed("LetterSquareView", owner: self, options:  nil)
@@ -42,37 +29,8 @@ class LetterSquareView: UIView {
         letterLbl.text = letter.capitalizedString
         self.letter = letter
         self.addSubview(letterSquareView)
-        
-        topToLeft.layer.cornerRadius = squareViewSelectionCornerRadius
-        topToRight.layer.cornerRadius = squareViewSelectionCornerRadius
-        bottomToRight.layer.cornerRadius = squareViewSelectionCornerRadius
-        bottomToLeft.layer.cornerRadius = squareViewSelectionCornerRadius
-        horizontalTube.layer.cornerRadius = squareViewSelectionCornerRadius
-        verticalTube.layer.cornerRadius = squareViewSelectionCornerRadius
-        endFromLeft.layer.cornerRadius = squareViewSelectionCornerRadius
-        endFromRight.layer.cornerRadius = squareViewSelectionCornerRadius
-        endFromTop.layer.cornerRadius = squareViewSelectionCornerRadius
-        endFromBottom.layer.cornerRadius = squareViewSelectionCornerRadius
-//        topToLeftWhiteSpace.layer.cornerRadius = squareViewSelectionInsideCornerRadius
-//        topToRightWhiteSpace.layer.cornerRadius = squareViewSelectionInsideCornerRadius
-//        bottomToRightWhiteSpace.layer.cornerRadius = squareViewSelectionInsideCornerRadius
-//        bottomToLeftWhiteSpace.layer.cornerRadius = squareViewSelectionInsideCornerRadius
-
-        topToLeft.clipsToBounds = true
-        topToRight.clipsToBounds = true
-        bottomToRight.clipsToBounds = true
-        bottomToLeft.clipsToBounds = true
-        horizontalTube.clipsToBounds = true
-        verticalTube.clipsToBounds = true
-        endFromLeft.clipsToBounds = true
-        endFromRight.clipsToBounds = true
-        endFromTop.clipsToBounds = true
-        endFromBottom.clipsToBounds = true
-//        topToLeftWhiteSpace.clipsToBounds = true
-//        topToRightWhiteSpace.clipsToBounds = true
-//        bottomToRightWhiteSpace.clipsToBounds = true
-//        bottomToLeftWhiteSpace.clipsToBounds = true
-        
+        letterSquareViewView.clipsToBounds = true
+    
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -83,18 +41,101 @@ class LetterSquareView: UIView {
         return false
     }
     
-    func changeBackgroundColors(colour:UIColor?) {
-        for view in [topToRight, topToLeft, bottomToRight, bottomToLeft, horizontalTube, verticalTube, endFromLeft, endFromRight, endFromTop, endFromBottom] {
-            view.backgroundColor = colour
-        }
+    func changeSelectionColor(color: UIColor){
+        newView.backgroundColor = color
     }
     
-    func hideAllViewsExcept(exceptionView: UIView){
-        for view in [topToRight, topToLeft, bottomToRight, bottomToLeft, horizontalTube, verticalTube, endFromLeft, endFromRight, endFromTop, endFromBottom] {
-            view.hidden = true
+    func makeViewsFor(borderType: BorderType, color: UIColor) {
+        let subViews = letterSquareViewView.subviews
+        for subview in subViews{
+            if (subview is UILabel) {
+            } else {
+                subview.removeFromSuperview()
+
+            }
         }
-        exceptionView.hidden = false
+        
+        if borderType == BorderType.none {
+            return
+        }
+        if borderType == BorderType.unknown {
+            return
+        }
+        
+        var left = squareViewSelectionOutside
+        var right = squareViewSelectionOutside
+        var top = squareViewSelectionOutside
+        var bottom = squareViewSelectionOutside
+        var whiteSpace:Bool = false
+        var x:CGFloat = 0
+        var y:CGFloat = 0
+        let letterViewWidth = letterSquareViewView.frame.width
+        let letterViewHeight = letterSquareViewView.frame.height
+       
+        if borderType == BorderType.endFromTop {
+            left = squareViewSelectionWidth
+            right = squareViewSelectionWidth
+            bottom = squareViewSelectionWidth
+        } else if borderType == BorderType.endFromLeft {
+            top = squareViewSelectionWidth
+            bottom = squareViewSelectionWidth
+            right = squareViewSelectionWidth
+        } else if borderType == BorderType.endFromRight {
+            top = squareViewSelectionWidth
+            bottom = squareViewSelectionWidth
+            left = squareViewSelectionWidth
+        } else if borderType == BorderType.endFromBottom {
+            left = squareViewSelectionWidth
+            right = squareViewSelectionWidth
+            top  = squareViewSelectionWidth
+        } else if borderType == BorderType.tubeVertical {
+            left = squareViewSelectionWidth
+            right = squareViewSelectionWidth
+        } else if borderType == BorderType.tubeHorizontal {
+            top = squareViewSelectionWidth
+            bottom = squareViewSelectionWidth
+        } else if borderType == BorderType.cornerTopToLeft {
+            bottom = squareViewSelectionWidth
+            right = squareViewSelectionWidth
+            whiteSpace = true
+        } else if borderType == BorderType.cornerTopToRight {
+            bottom = squareViewSelectionWidth
+            left = squareViewSelectionWidth
+            whiteSpace = true
+            x = letterViewWidth - squareViewSelectionWidth
+        } else if borderType == BorderType.cornerBottomToLeft {
+            top = squareViewSelectionWidth
+            right = squareViewSelectionWidth
+            whiteSpace = true
+            y = letterViewHeight - squareViewSelectionWidth
+
+        } else if borderType == BorderType.cornerBottomToRight {
+            top = squareViewSelectionWidth
+            left = squareViewSelectionWidth
+            whiteSpace = true
+            x = letterViewWidth - squareViewSelectionWidth
+            y = letterViewHeight - squareViewSelectionWidth
+        }
+        
+        if whiteSpace {
+            let whiteSpaceView = UIView(frame: CGRect(x: x, y: y, width: squareViewSelectionWidth, height: squareViewSelectionWidth))
+            whiteSpaceView.backgroundColor = gridBackgroundColour
+            letterSquareViewView.addSubview(whiteSpaceView)
+        }
+        
+        newView.translatesAutoresizingMaskIntoConstraints = false
+        newView.backgroundColor = color
+        newView.layer.cornerRadius = squareViewSelectionCornerRadius
+        newView.clipsToBounds = true
+        letterSquareViewView.addSubview(newView)
+        letterSquareViewView.sendSubviewToBack(newView)
+        
+        let leftContraints = NSLayoutConstraint(item: newView, attribute:.LeadingMargin, relatedBy: .Equal, toItem: letterSquareViewView, attribute: .LeadingMargin, multiplier: 1.0, constant: left)
+        let rightContraints = NSLayoutConstraint(item: newView, attribute:.TrailingMargin, relatedBy: .Equal, toItem: letterSquareViewView, attribute: .TrailingMargin, multiplier: 1.0, constant: -right)
+        let topContraints = NSLayoutConstraint(item: newView, attribute:.TopMargin, relatedBy: .Equal, toItem: letterSquareViewView, attribute: .TopMargin, multiplier: 1.0,constant: top)
+        let bottomContraints = NSLayoutConstraint(item: newView, attribute:.BottomMargin, relatedBy: .Equal, toItem: letterSquareViewView, attribute: .BottomMargin, multiplier: 1.0,constant: -bottom)
+        
+        NSLayoutConstraint.activateConstraints([leftContraints, rightContraints, topContraints, bottomContraints])
+
     }
-    
-    
 }

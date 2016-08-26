@@ -50,8 +50,6 @@ class CharacterGridView: UIView {
                 
                 arrayOfViewsInRow.append(LetterSquareView(frame: CGRect(x: x, y: y, width: letterSquareViewWidth, height: letterSquareViewHeight), letter: letter))
                 
-                arrayOfViewsInRow[j].letterSquareViewView.backgroundColor = nonHighlightedLetterBackGroundColor
-                arrayOfViewsInRow[j].clipsToBounds = true
                 self.addSubview(arrayOfViewsInRow[j])
             }
             arrayOfRows.append(arrayOfViewsInRow)
@@ -62,7 +60,6 @@ class CharacterGridView: UIView {
         NSNotificationCenter.defaultCenter().postNotificationName(TOUCH_BEGAN, object: touches)
         
     }
-    
     
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
         NSNotificationCenter.defaultCenter().postNotificationName(TOUCH_MOVED, object: touches)

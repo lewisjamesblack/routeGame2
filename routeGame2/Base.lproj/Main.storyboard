@@ -57,7 +57,7 @@
                                 </constraints>
                                 <state key="normal" title="Button"/>
                                 <connections>
-                                    <action selector="onButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="mSW-jl-rj9"/>
+                                    <action selector="onButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Isq-Qq-xQN"/>
                                 </connections>
                             </button>
                         </subviews>

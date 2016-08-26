@@ -16,14 +16,14 @@ class GameViewController: UIViewController {
     
     let numberOfCols = Route().numberOfCols
     let numberOfRows = Route().numberOfRows
-    let routeCoOrds = Route().getRoute(1,type: 2)!
+    let routeCoOrds = Route().getRoute(0,type: 0)!
     let minWordLengthIfNoSmaller = 4
     let maxWordLengthIfNoBigger = 9
-    let dataBeforeTranslation = Data().ninthData
+    let dataBeforeTranslation = Data().firstData
     
     var currentColor:Int = 0
     var color:UIColor{
-        return colours[abs(currentColor % (colours.count - 1))]
+        return colours[abs(currentColor % (colours.count))]
     }
     var arrayOfRows:Array<Array<LetterSquareView>> = []
     var wordsFound: Array<Bool> = []
@@ -121,6 +121,8 @@ class GameViewController: UIViewController {
         
         //Make Grid
         
+        scrollView.canCancelContentTouches = false
+
         if scrollingOnlyTwoFinger {
             scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
         }
@@ -144,6 +146,7 @@ class GameViewController: UIViewController {
         func onSquareTouched(touches:Set<UITouch>, startOfTouch:Bool) {
             var square = pointIsInSquare(touches)
             if square != nil {
+                
                 if isTouchNewSquare(touches, square: square!) {
                     if whatIsSquare(square!, startOfTouch: startOfTouch).0 == Square.selectedInPreviousWord {
                         square!.2 = whatIsSquare(square!, startOfTouch: startOfTouch).1
@@ -160,22 +163,34 @@ class GameViewController: UIViewController {
                     } else if whatIsSquare(square!, startOfTouch: startOfTouch).0 == Square.unSelectedNotAllowed {
                         square!.2 = whatIsSquare(square!, startOfTouch: startOfTouch).1
                     }
-                    
-                    if selectedPoints.count > 0 {
-                        for m in 0..<selectedPoints.count{
-                            let i = selectedPoints[m].0
-                            let j = selectedPoints[m].1
-                            let borderType = selectedPoints[m].2
-                            let squareView = arrayOfRows[i][j]
-                            
-                            makeBorders(squareView, borderType: borderType)
-                        }
-                    }
+                }
+            }
+        }
+        
+        func makeBordersOfLastTwoSquares(){
+            
+            func makeBordersForSquare(square:(Int,Int, BorderType)){
+                let i = square.0
+                let j = square.1
+                let borderType = square.2
+                let squareView = arrayOfRows[i][j]
+                
+                makeBorders(squareView, borderType: borderType)
+            }
+            
+            if selectedWords.count > 0 {
+                makeBordersForSquare(selectedWords[selectedWords.count - 1][selectedWords[selectedWords.count - 1].count - 1])
+                if selectedWords[selectedWords.count - 1].count > 1 {
+                    makeBordersForSquare(selectedWords[selectedWords.count - 1][selectedWords[selectedWords.count - 1].count - 2])
                 }
             }
         }
 
+        
+        
+        
         func wordSelectionOver(){
+            
             if currentWord != nil {
                 
                 if isWordCorrect(currentWord!).0 == false {
@@ -185,6 +200,8 @@ class GameViewController: UIViewController {
                         deSelectWord(currentWord!)
                     }
                     translationText.text = ""
+                } else {
+                    currentColor += 1
                 }
             }
             
@@ -217,7 +234,7 @@ class GameViewController: UIViewController {
             }
             return nil
         }
-        
+
         func isTouchNewSquare(touches:Set<UITouch>, square:(Int,Int, BorderType)) -> Bool {
             if currentSquare != nil {
                 if square == currentSquare! {
@@ -234,7 +251,7 @@ class GameViewController: UIViewController {
         
         
         
-        
+
         //Establish what square is
         
         enum Square {
@@ -330,7 +347,7 @@ class GameViewController: UIViewController {
             return true
         }
         
-        //Do stuff with squaret
+        //Do stuff with square
         //Select
         func selectSquare(square:(Int,Int, BorderType), startOfTouch: Bool){
             if startOfTouch {
@@ -338,15 +355,12 @@ class GameViewController: UIViewController {
                     selectedWords = [[square]]
                 } else  {
                     selectedWords.append([square])
-                    currentColor += 1
                 }
                 currentWord = selectedWords.count - 1
             } else {
                 selectedWords[selectedWords.count - 1].append(square)
             }
             endOfSelection(square)
-            highlightSquare(square)
-            
         }
         
         func putBorderOnPreviousSquare(square:(Int,Int, BorderType)){
@@ -392,7 +406,7 @@ class GameViewController: UIViewController {
             }
         }
         
-        
+
         func putEndBorderOnCurrentSquare(square:(Int,Int, BorderType)){
             let oneBehind = whereIsSquare(square)
             let (word,letter) = whatWordIsSquareIn(square)!
@@ -411,7 +425,7 @@ class GameViewController: UIViewController {
                 changeBorderTypeTo(BorderType.endFromRight)
             }
         }
-        
+
         func whatIsPreviousSquareIJ(square:(Int,Int, BorderType)) -> (Int,Int)? {
             let word = whatWordIsSquareIn(square)!.0
             let letter = whatWordIsSquareIn(square)!.1
@@ -479,13 +493,6 @@ class GameViewController: UIViewController {
             case error
         }
         
-        
-        func highlightSquare(square:(Int,Int, BorderType)) {
-            
-            arrayOfRows[square.0][square.1].changeBackgroundColors(color)
-        }
-      
-        
         //Delete
         
         func undoWordQuestion(square:(Int,Int, BorderType)) {
@@ -495,7 +502,7 @@ class GameViewController: UIViewController {
                 
             }
         }
-        
+
         func deleteWordAlert(title: String, msg: String, word:Int) {
             let alert = UIAlertController(title: title, message: msg, preferredStyle: .Alert)
             let action = UIAlertAction(title: "Ok", style: .Default, handler: {(alert: UIAlertAction!) in
@@ -522,26 +529,27 @@ class GameViewController: UIViewController {
                 unHighlightSquare(selectedWords[word][i])
             }
             selectedWords.removeAtIndex(word)
-            
-
+            currentColor -= 1
         }
         
         func unHighlightSquare(square:(Int,Int, BorderType)) {
             makeBorders(arrayOfRows[square.0][square.1], borderType: BorderType.none)
-            arrayOfRows[square.0][square.1].changeBackgroundColors(nil)
         }
         
         func colourChangeBeforeDeletion(word:Int){
             for i in 0..<selectedWords[word].count {
                 let square = selectedWords[word][i]
-                arrayOfRows[square.0][square.1].changeBackgroundColors(deleteColourChangeLetterLabelColor)
+                let squareView = arrayOfRows[square.0][square.1]
+                squareView.lastColor = squareView.newView.backgroundColor
+                squareView.newView.backgroundColor = deleteColourChangeLetterLabelColor
             }
         }
         
         func colourChangeIfDeletionCancelled(word:Int){
             for i in 0..<selectedWords[word].count {
                 let square = selectedWords[word][i]
-                arrayOfRows[square.0][square.1].changeBackgroundColors(color)
+                let squareView = arrayOfRows[square.0][square.1]
+                squareView.newView.backgroundColor = squareView.lastColor
             }
         }
 
@@ -580,12 +588,14 @@ class GameViewController: UIViewController {
             endOfSelection(square)
         }
         
-        
+
         
         func endOfSelection(square:(Int,Int, BorderType)){
             
             putBorderOnPreviousSquare(square)
             putEndBorderOnCurrentSquare(square)
+            makeBordersOfLastTwoSquares()
+
             let word = whatWordIsSquareIn(square)!.0
             
             if spellOutNameAtBottom {
@@ -611,9 +621,9 @@ class GameViewController: UIViewController {
         }
         
         
-        
+
         // check if Words correct
-        
+     
         
         
         
@@ -684,31 +694,10 @@ class GameViewController: UIViewController {
         //border configs
         
         func makeBorders(squareView: LetterSquareView, borderType: BorderType){
-            if borderType == BorderType.endFromTop {
-                squareView.hideAllViewsExcept(squareView.endFromTop)
-            } else if borderType == BorderType.endFromLeft {
-                squareView.hideAllViewsExcept(squareView.endFromLeft)
-            } else if borderType == BorderType.endFromRight {
-                squareView.hideAllViewsExcept(squareView.endFromRight)
-            } else if borderType == BorderType.endFromBottom {
-                squareView.hideAllViewsExcept(squareView.endFromBottom)
-            } else if borderType == BorderType.tubeVertical {
-                squareView.hideAllViewsExcept(squareView.verticalTube)
-            } else if borderType == BorderType.tubeHorizontal {
-                squareView.hideAllViewsExcept(squareView.horizontalTube)
-            } else if borderType == BorderType.cornerTopToLeft {
-                squareView.hideAllViewsExcept(squareView.topToLeft)
-            } else if borderType == BorderType.cornerTopToRight {
-                squareView.hideAllViewsExcept(squareView.topToRight)
-            } else if borderType == BorderType.cornerBottomToLeft {
-                squareView.hideAllViewsExcept(squareView.bottomToLeft)
-            } else if borderType == BorderType.cornerBottomToRight {
-                squareView.hideAllViewsExcept(squareView.bottomToRight)
-            }
+            squareView.makeViewsFor(borderType, color: color)
         }
     
-    
-
+       
         
         NSNotificationCenter.defaultCenter().addObserverForName(TOUCH_BEGAN, object: nil, queue: nil, usingBlock: {( notification ) -> Void in
             if let touches: Set<UITouch> = notification.object as! Set<UITouch>? {
@@ -735,15 +724,20 @@ class GameViewController: UIViewController {
     
     
     @IBAction func onButtonPressed(sender: AnyObject) {
-        if scrollView.panGestureRecognizer.minimumNumberOfTouches == 1 {
-            scrollButton.setTitle("Choose", forState: .Normal)
-            scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
-        } else if scrollView.panGestureRecognizer.minimumNumberOfTouches == 2 {
-            scrollButton.setTitle("Scroll", forState: .Normal)
-            scrollView.panGestureRecognizer.minimumNumberOfTouches = 1
-        }
+            if scrollView.panGestureRecognizer.minimumNumberOfTouches == 1 {
+                scrollButton.setTitle("Choose", forState: .Normal)
+                scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
+            } else if scrollView.panGestureRecognizer.minimumNumberOfTouches == 2 {
+                scrollButton.setTitle("Scroll", forState: .Normal)
+                scrollView.panGestureRecognizer.minimumNumberOfTouches = 1
+            }
     }
+    
+    
+    
+    
 
+}
     
     func routeArrayOfRows(array: Array<(Int,Int)>, numberOfRows: Int , numberOfCols: Int) -> Array<Array<Int>> {
         var arrayOfRows = [[Int]](count: numberOfRows, repeatedValue: [Int](count: numberOfCols, repeatedValue: 0))
@@ -755,25 +749,24 @@ class GameViewController: UIViewController {
         }
         return arrayOfRows
     }
+
+
+
+enum BorderType {
+    case endFromTop
+    case endFromLeft
+    case endFromRight
+    case endFromBottom
     
-    enum BorderType {
-        case endFromTop
-        case endFromLeft
-        case endFromRight
-        case endFromBottom
-        
-        case tubeVertical
-        case tubeHorizontal
-        
-        case cornerTopToLeft
-        case cornerTopToRight
-        case cornerBottomToLeft
-        case cornerBottomToRight
-        
-        case none
-        
-        case unknown
-    }
-
+    case tubeVertical
+    case tubeHorizontal
+    
+    case cornerTopToLeft
+    case cornerTopToRight
+    case cornerBottomToLeft
+    case cornerBottomToRight
+    
+    case none
+    
+    case unknown
 }
-

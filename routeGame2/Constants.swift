@@ -13,13 +13,15 @@ let firstLetterDistanceFromTop:CGFloat = 0
 
 let letterSquareViewWidth:CGFloat = 50 //change in .xib file
 let letterSquareViewHeight:CGFloat = 50 //change in .xib file
-let squareViewSelectionWidth:CGFloat = 5
+let squareViewSelectionOutside:CGFloat = -20
+let squareViewSelectionWidth:CGFloat = 15
 let squareViewSelectionCornerRadius: CGFloat = 10
 let squareViewSelectionInsideCornerRadius: CGFloat = 3
-let nonHighlightedLetterBackGroundColor:UIColor = UIColor.whiteColor()
-let nonHighlightedLetterOutlineColor:UIColor = UIColor.lightGrayColor()
+
+let gridBackgroundColour = UIColor.whiteColor()
 let deleteColourChangeLetterLabelColor = UIColor.lightGrayColor()
 
+//let colours = [UIColor.redColor(), UIColor.blueColor(), UIColor.greenColor()]
 let colours = [UIColor(netHex:0x59ABE3), UIColor(netHex:0x9A12B3), UIColor(netHex:0xBF55EC), UIColor(netHex:0x9B59B6), UIColor(netHex:0x59ABE3), UIColor(netHex:0x81CFE0), UIColor(netHex:0x22A7F0), UIColor(netHex:0x4183D7), UIColor(netHex:0x81CFE0), UIColor(netHex:0x19B5FE), UIColor(netHex:0x3498DB), UIColor(netHex:0x336E7B)]
 
 
