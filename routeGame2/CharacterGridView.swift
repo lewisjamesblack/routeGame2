@@ -17,7 +17,6 @@ class CharacterGridView: UIView {
     var route:Array<Array<Int>>! //array of columns of positions in route e.g [[0,13,14],[1,12,9]...]
     var answersOneString:String!
     var arrayOfRows:Array<Array<LetterSquareView>> = []
-
     
     init(frame: CGRect, numberOfCols:Int, numberOfRows:Int, route:Array<Array<Int>>, answersOneString:String) {
         self.numberOfCols = numberOfCols

@@ -10,56 +10,46 @@ import UIKit
 
 class GameViewController: UIViewController {
 
-    @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var translationText: UILabel!
     @IBOutlet weak var scrollButton: UIButton!
+    @IBOutlet weak var scrollView: UIScrollView!
     
     let numberOfCols = Route().numberOfCols
     let numberOfRows = Route().numberOfRows
     let routeCoOrds = Route().getRoute(0,type: 0)!
     let minWordLengthIfNoSmaller = 4
     let maxWordLengthIfNoBigger = 9
-    let dataBeforeTranslation = Data().firstData
+    let dataBeforeTranslation = Data().secondData
     
     var currentColor:Int = 0
     var color:UIColor{
         return colours[abs(currentColor % (colours.count))]
     }
-    var arrayOfRows:Array<Array<LetterSquareView>> = []
+    var arrayOfRows = [[LetterSquareView]]()
     var wordsFound: Array<Bool> = []
     var currentSquare:(Int,Int, BorderType)?
     var currentWord:Int?
     var selectedWords:Array<Array<(Int,Int, BorderType)>> = []
-    var selectedPoints: Array<(Int,Int, BorderType)> {
-        var selectedPoints:Array<(Int,Int, BorderType)> = []
-        if selectedWords.count != 0 {
-            for i in 0..<selectedWords.count {
-                for x in 0..<selectedWords[i].count{
-                    selectedPoints.append(selectedWords[i][x])
-                }
-            }
-        }
-        return selectedPoints
-    }
+    var isWordBeingSelectedCorrect:Bool = false
     
     //Options
     
     //TranslationText
     var spellOutNameAtBottom:Bool = true //spells it as you go, but not on unselecting yes
     var sayIfCorrect:Bool = true
-    var giveTranslation:Bool = false //can be true but will only work if it's a translating one, only if above is true does it work
+    var giveTranslation:Bool = true //can be true but will only work if it's a translating one, only if above is true does it work
     //Scrolling
     var scrollingOnlyTwoFinger:Bool = false
-    var scrollingButton:Bool = true // counters the one before it
+    var scrollingButton:Bool = false //if this true the one before becomes false
     //Other
+    var deletingWords:Bool = false
     var ifWordIncorrectUnselect:Bool = true
-    
+    var stopSelectingIfWordCorrect:Bool = true
+    var autoCorrectWord:Bool = true
     
     override func viewDidLoad() {
         
         super.viewDidLoad()
-
-        
         //Calculate Constants
 
         let needsTranslation:Bool = (dataBeforeTranslation[1] as! Bool)
@@ -76,7 +66,6 @@ class GameViewController: UIViewController {
         
         let data = makeData()
         let answersArray = Data().makeArrayOfAnswers(data)
-        
         
         func maxWordLengthFunc() -> Int {
             var maxWordSoFar = maxWordLengthIfNoBigger
@@ -102,7 +91,7 @@ class GameViewController: UIViewController {
         let maxWordLength = maxWordLengthFunc()
         
         var wordStart = 0
-        var coordsOfAnswersArray:Array<Array<(Int,Int)>> = []
+        var coordsOfAnswersArray = [[(Int,Int)]]()
         let answersOneString = answersArray.joinWithSeparator("")
         let route = routeArrayOfRows(routeCoOrds, numberOfRows: numberOfRows, numberOfCols: numberOfCols)
         var wordsFound = [Bool](count: answersArray.count, repeatedValue: false)
@@ -116,13 +105,34 @@ class GameViewController: UIViewController {
         }
         
         
-       
-        
         
         //Make Grid
-        
-        scrollView.canCancelContentTouches = false
 
+        
+        let characterGridView = CharacterGridView(frame: CGRect(x: 0, y: 0, width: width, height: height), numberOfCols: numberOfCols, numberOfRows: numberOfRows, route: route, answersOneString: answersOneString)
+        scrollView.addSubview(characterGridView )
+        scrollView.contentSize = CGSize(width: width, height: height)
+        
+        let arrayOfRows = characterGridView.arrayOfRows
+        
+        //here is probably where the amazing bit of code to sort scrolling problem will go
+        
+        
+        
+
+      //  characterGridView.addGestureRecognizer(scrollView.panGestureRecognizer)
+//        let viewToStopStuff = ViewToStopScrolling(frame: CGRect(x: 0, y: 0, width: 150, height: 150))
+//        viewToStopStuff.backgroundColor = UIColor.blueColor()
+//        scrollView.addSubview(viewToStopStuff)
+//        
+       // scrollView.delaysContentTouches = false
+        
+        
+        
+        
+        
+        
+        
         if scrollingOnlyTwoFinger {
             scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
         }
@@ -133,66 +143,69 @@ class GameViewController: UIViewController {
             scrollButton.setTitle("", forState: .Normal)
         }
         
-        let characterGridView = CharacterGridView(frame: CGRect(x: 0, y: 0, width: width, height: height), numberOfCols: numberOfCols, numberOfRows: numberOfRows, route: route, answersOneString: answersOneString)
-        scrollView.addSubview(characterGridView )
-        scrollView.contentSize = CGSize(width: width, height: height)
-        
-        let arrayOfRows = characterGridView.arrayOfRows
-        
         //Detect Touches
       
         var startPoint:CGPoint?
 
         func onSquareTouched(touches:Set<UITouch>, startOfTouch:Bool) {
             var square = pointIsInSquare(touches)
-            if square != nil {
-                
-                if isTouchNewSquare(touches, square: square!) {
-                    if whatIsSquare(square!, startOfTouch: startOfTouch).0 == Square.selectedInPreviousWord {
-                        square!.2 = whatIsSquare(square!, startOfTouch: startOfTouch).1
-                        if startOfTouch {
-                            undoWordQuestion(square!)
-                        }
-                    } else if whatIsSquare(square!, startOfTouch: startOfTouch).0 == Square.selectedInCurrentWord {
-                        square!.2 = whatIsSquare(square!, startOfTouch: startOfTouch).1
-                        unselectUpToSquare(square!)
-                        
-                    } else if whatIsSquare(square!, startOfTouch: startOfTouch).0 == Square.unSelectedAllowed {
-                        square!.2 = whatIsSquare(square!, startOfTouch: startOfTouch).1
-                        selectSquare(square!, startOfTouch:startOfTouch)
-                    } else if whatIsSquare(square!, startOfTouch: startOfTouch).0 == Square.unSelectedNotAllowed {
-                        square!.2 = whatIsSquare(square!, startOfTouch: startOfTouch).1
+            if square != nil && isTouchNewSquare(touches, square: square!) {
+                switch whatIsSquare(square!, startOfTouch: startOfTouch).0 {
+                case Square.selectedInPreviousWord: square!.2 = whatIsSquare(square!, startOfTouch: startOfTouch).1
+                    if startOfTouch && deletingWords {
+                        deleteWordQuestion(square!)
                     }
+                case Square.selectedInCurrentWord: square!.2 = whatIsSquare(square!, startOfTouch: startOfTouch).1
+                    if stopSelectingIfWordCorrect {
+                        if isWordBeingSelectedCorrect != true {
+                            unselectUpToSquare(square!)
+                        }
+                    } else {
+                        unselectUpToSquare(square!)
+                    }
+                case Square.unSelectedAllowed: square!.2 = whatIsSquare(square!, startOfTouch: startOfTouch).1
+                    selectSquare(square!, startOfTouch:startOfTouch)
+                case Square.unSelectedNotAllowed:square!.2 = whatIsSquare(square!, startOfTouch: startOfTouch).1
                 }
             }
         }
         
         func makeBordersOfLastTwoSquares(){
-            
-            func makeBordersForSquare(square:(Int,Int, BorderType)){
-                let i = square.0
-                let j = square.1
-                let borderType = square.2
-                let squareView = arrayOfRows[i][j]
-                
-                makeBorders(squareView, borderType: borderType)
+            let count = selectedWords.count
+            let lastCount = selectedWords[count - 1].count
+            if count > 0 {
+                makeBordersForSquare(selectedWords[count - 1][lastCount - 1])
+                if lastCount > 1 {
+                    makeBordersForSquare(selectedWords[count - 1][lastCount - 2])
+                }
             }
+        }
+        
+        func makeBordersOfLast(squares:Int){
+            let count = selectedWords.count
+            let letterCount = selectedWords[count - 1].count
             
-            if selectedWords.count > 0 {
-                makeBordersForSquare(selectedWords[selectedWords.count - 1][selectedWords[selectedWords.count - 1].count - 1])
-                if selectedWords[selectedWords.count - 1].count > 1 {
-                    makeBordersForSquare(selectedWords[selectedWords.count - 1][selectedWords[selectedWords.count - 1].count - 2])
+            if count > 0 && letterCount - squares >= 0 && letterCount > 0 {
+                for i in 0..<squares {
+                    makeBordersForSquare(selectedWords[count - 1][letterCount - 1 - i])
                 }
             }
         }
 
-        
+        func makeBordersForSquare(square:(Int,Int, BorderType)){
+            let i = square.0
+            let j = square.1
+            let borderType = square.2
+            let squareView = arrayOfRows[i][j]
+            
+            makeBorders(squareView, borderType: borderType)
+        }
         
         
         func wordSelectionOver(){
-            
+            isWordBeingSelectedCorrect = false
+
             if currentWord != nil {
-                
                 if isWordCorrect(currentWord!).0 == false {
                     if selectedWords[currentWord!].count < minWordLength {
                         deSelectWord(currentWord!)
@@ -241,7 +254,6 @@ class GameViewController: UIViewController {
                     return false
                 }
                 currentSquare = square
-                
                 return true
             }
             currentSquare = square
@@ -265,7 +277,6 @@ class GameViewController: UIViewController {
             
             if isSquareSelected(square).0 {
                 if isSelectedSquareInCurrentWord(square, startOfTouch: startOfTouch) {
-                    
                     return (Square.selectedInCurrentWord, isSquareSelected(square).1)
                 }
                 return (Square.selectedInPreviousWord, isSquareSelected(square).1)
@@ -279,12 +290,15 @@ class GameViewController: UIViewController {
         
         func isSquareSelected(square:(Int,Int, BorderType)) -> (Bool, BorderType) {
             if selectedWords.count != 0 {
-                for i in 0..<selectedPoints.count {
-                    if square.0 == selectedPoints[i].0 && square.1 == selectedPoints[i].1 {
-                        
-                        return (true, selectedPoints[i].2)
+                for i in 0..<selectedWords.count {
+                    for j in 0..<selectedWords[i].count {
+                        if square.0 == selectedWords[i][j].0 && square.1 == selectedWords[i][j].1 {
+                            return (true, selectedWords[i][j].2)
+                        }
                     }
                 }
+                
+                
             }
             return (false, BorderType.none)
         }
@@ -320,26 +334,18 @@ class GameViewController: UIViewController {
                     if highLightedWord.count > maxWordLength - 1 {
                         return false
                     }
-                    
+                    if stopSelectingIfWordCorrect {
+                        if isWordBeingSelectedCorrect{
+                            return false
+                        }
+                    }
                     let newI = square.0
                     let newJ = square.1
                     let lastSquareHighlighted = highLightedWord[highLightedWord.count - 1]
                     let oldI = lastSquareHighlighted.0
                     let oldJ = lastSquareHighlighted.1
                     
-                    if  newI > (oldI + 1) || newI < (oldI - 1) || newJ > (oldJ + 1) || newJ < (oldJ - 1) {
-                        return false
-                    }
-                    if newI == (oldI + 1) &&  newJ == (oldJ + 1){
-                        return false
-                    }
-                    if newI == (oldI + 1) && newJ == (oldJ - 1) {
-                        return false
-                    }
-                    if newI == (oldI - 1) &&  newJ == (oldJ + 1) {
-                        return false
-                    }
-                    if newI == (oldI - 1) && newJ == (oldJ - 1) {
+                    if  newI > (oldI + 1) || newI < (oldI - 1) || newJ > (oldJ + 1) || newJ < (oldJ - 1) || newI == (oldI + 1) &&  newJ == (oldJ + 1) || newI == (oldI + 1) && newJ == (oldJ - 1) || newI == (oldI - 1) &&  newJ == (oldJ + 1) || newI == (oldI - 1) && newJ == (oldJ - 1) {
                         return false
                     }
                 }
@@ -366,15 +372,29 @@ class GameViewController: UIViewController {
         func putBorderOnPreviousSquare(square:(Int,Int, BorderType)){
             if selectedWords[selectedWords.count - 1].count == 2 {
                 //all four are mistakes that work because it's the first one, not sure why
-                if whereIsSquare(square) == SquarePosition.aboveMiddle {
-                    selectedWords[selectedWords.count - 1][0].2 = BorderType.endFromBottom
-                } else if whereIsSquare(square) == SquarePosition.belowMiddle {
-                    selectedWords[selectedWords.count - 1][0].2 = BorderType.endFromTop
-                } else if whereIsSquare(square) == SquarePosition.middleLeft {
-                    selectedWords[selectedWords.count - 1][0].2 = BorderType.endFromRight
-                } else if whereIsSquare(square) == SquarePosition.middleRight {
-                    selectedWords[selectedWords.count - 1][0].2 = BorderType.endFromLeft
+                let count = selectedWords.count - 1
+                
+                func setBorder(borderType:BorderType){
+                    selectedWords[count][0].2 = borderType
                 }
+                
+                switch whereIsSquare(square){
+                case SquarePosition.aboveMiddle: setBorder(BorderType.endFromBottom)
+                case SquarePosition.belowMiddle: setBorder(BorderType.endFromTop)
+                case SquarePosition.middleLeft: setBorder(BorderType.endFromRight)
+                case SquarePosition.middleRight: setBorder(BorderType.endFromLeft)
+                default: break
+                }
+                
+//                switch whereIsSquare(square){
+//                case .aboveMiddle: setBorder(BorderType.endFromBottom)
+//                case .belowMiddle: setBorder(BorderType.endFromTop)
+//                case .middleLeft: setBorder(BorderType.endFromRight)
+//                case .middleRight: setBorder(BorderType.endFromLeft)
+//                default: break
+//                }
+                
+
             } else {
                 let previousSquareWord = whatIsPreviousSquareWL(square)?.0
                 let previousSquareLetter = whatIsPreviousSquareWL(square)?.1
@@ -415,14 +435,12 @@ class GameViewController: UIViewController {
                 selectedWords[word][letter].2 = borderType
             }
             
-            if oneBehind == SquarePosition.aboveMiddle {
-                changeBorderTypeTo(BorderType.endFromTop)
-            } else if oneBehind == SquarePosition.belowMiddle {
-                changeBorderTypeTo(BorderType.endFromBottom)
-            } else if oneBehind == SquarePosition.middleLeft {
-                changeBorderTypeTo(BorderType.endFromLeft)
-            } else if oneBehind == SquarePosition.middleRight {
-                changeBorderTypeTo(BorderType.endFromRight)
+            switch oneBehind {
+            case SquarePosition.aboveMiddle: changeBorderTypeTo(BorderType.endFromTop)
+            case SquarePosition.belowMiddle: changeBorderTypeTo(BorderType.endFromBottom)
+            case SquarePosition.middleLeft: changeBorderTypeTo(BorderType.endFromLeft)
+            case SquarePosition.middleRight: changeBorderTypeTo(BorderType.endFromRight)
+            default: break
             }
         }
 
@@ -495,7 +513,7 @@ class GameViewController: UIViewController {
         
         //Delete
         
-        func undoWordQuestion(square:(Int,Int, BorderType)) {
+        func deleteWordQuestion(square:(Int,Int, BorderType)) {
             if let j = whatWordIsSquareIn(square) {
                 let m = j.0
                 deleteWordAlert("Do you want to delete this word?", msg: "Press Ok to delete", word: m)
@@ -540,8 +558,8 @@ class GameViewController: UIViewController {
             for i in 0..<selectedWords[word].count {
                 let square = selectedWords[word][i]
                 let squareView = arrayOfRows[square.0][square.1]
-                squareView.lastColor = squareView.newView.backgroundColor
-                squareView.newView.backgroundColor = deleteColourChangeLetterLabelColor
+                squareView.lastColor = squareView.selectingView.backgroundColor
+                squareView.selectingView.backgroundColor = deleteColourChangeLetterLabelColor
             }
         }
         
@@ -549,7 +567,7 @@ class GameViewController: UIViewController {
             for i in 0..<selectedWords[word].count {
                 let square = selectedWords[word][i]
                 let squareView = arrayOfRows[square.0][square.1]
-                squareView.newView.backgroundColor = squareView.lastColor
+                squareView.selectingView.backgroundColor = squareView.lastColor
             }
         }
 
@@ -591,18 +609,45 @@ class GameViewController: UIViewController {
 
         
         func endOfSelection(square:(Int,Int, BorderType)){
-            
             putBorderOnPreviousSquare(square)
             putEndBorderOnCurrentSquare(square)
-            makeBordersOfLastTwoSquares()
-
-            let word = whatWordIsSquareIn(square)!.0
+           // makeBordersOfLastTwoSquares()
+            makeBordersOfLast(2)
+            
+            let wordCorrect = isWordCorrect(whatWordIsSquareIn(square)!.0)
+            if autoCorrectWord {
+                if wordCorrect.2 != nil {
+                    var lettersBeingDeleted = wordCorrect.2!
+                    let count = lettersBeingDeleted.count
+                    putEndBorderOnCurrentSquare(selectedWords.last!.last!)
+                    for i in 0..<count {
+                        let square = lettersBeingDeleted[i]
+                        let i = square.0
+                        let j = square.1
+                        let squareView = arrayOfRows[i][j]
+                        makeBorders(squareView, borderType: BorderType.none)
+                    }
+                    let wordsCount = selectedWords.count
+                    let lettersCount = selectedWords[wordsCount - 1].count
+                    if count > 0 {
+                        for i in 0..<lettersCount {
+                            putBorderOnPreviousSquare(selectedWords[wordsCount - 1][lettersCount - i - 1])
+                            print("getting chnage is \(selectedWords[wordsCount - 1][lettersCount - i - 1]))")
+                        }
+                    }
+                    print(selectedWords)
+                    makeBordersOfLast(lettersCount - 1)
+                }
+            }
             
             if spellOutNameAtBottom {
-                    changeTranslatedText()
+                changeTranslatedText()
             }
-            if isWordCorrect(word).0 {
-                let wordNumber = isWordCorrect(word).1!
+            
+            if wordCorrect.0 {
+                isWordBeingSelectedCorrect = true
+                
+                let wordNumber = wordCorrect.1!
                 wordsFound[wordNumber] = true
                 
                 let dataWord = answersArray[wordNumber]
@@ -613,45 +658,81 @@ class GameViewController: UIViewController {
                         self.translationText.text = "\(dataWord.capitalizedString) IS CORRECT!"
                     }
                 }
-                
                 if isWholeThingTrue() {
                     translationText.text = "Whole thing true"
                 }
             }
         }
-        
-        
-
         // check if Words correct
      
-        
-        
-        
-        func isWordCorrect(wordIndex:Int) -> (Bool,Int?) {
+        func isWordCorrect(wordIndex:Int) -> (Bool,Int?,[(Int,Int,BorderType)]?,[(Int,Int,BorderType)]?) {
             
             if wordIndex <= selectedWords.count - 1 {
                 let word = selectedWords[wordIndex]
-                
                 for i in 0..<coordsOfAnswersArray.count {
                     let answerWord = coordsOfAnswersArray[i]
                     if answerWord.count == word.count {
-                        var boolArray:Array<Bool> = []
+                        var boolArray = [Bool]()
                         for j in 0..<answerWord.count {
-                            if answerWord[j].0 == word[j].0 && answerWord[j].1 == word[j].1 {
-                                boolArray.append(true)
-                                
-                            } else {
-                                boolArray.append(false)
+                            if autoCorrectWord {
+                                func numberInRouteCoOrds(CoOrds:(Int,Int)) -> Int{
+                                    var found = 0  // <= will hold the index if it was found, or else will be nil
+                                    for i in (0..<routeCoOrds.count) {
+                                        if routeCoOrds[i] == CoOrds {
+                                            found = i
+                                        }
+                                    }
+                                    return found
+                                }
+                                let capitalized = answersOneString.capitalizedString
+                                let wordLetter = capitalized[capitalized.startIndex.advancedBy(numberInRouteCoOrds((word[j].0, word[j].1)))]
+                                let squareLetter = capitalized[capitalized.startIndex.advancedBy(numberInRouteCoOrds(answerWord[j]))]
+                              
+                                if wordLetter == squareLetter {
+                                    boolArray.append(true)
+                                } else {
+                                    boolArray.append(false)
+                                }
+                           } else {
+                                if answerWord[j].0 == word[j].0 && answerWord[j].1 == word[j].1 {
+                                    boolArray.append(true)
+                                } else {
+                                    boolArray.append(false)
+                                }
                             }
                         }
+                    
                         if boolArray.contains(false) {
+                        
                         } else {
-                            return(true,i)
+                            //print("bool array all true")
+                            if autoCorrectWord {
+                                var newAnswerWord:[(Int,Int,BorderType)] = word
+                                var lettersBeingDeleted:[(Int,Int,BorderType)] = []
+                                for j in 0..<answerWord.count {
+                                    if answerWord[j].0 != word[j].0 || answerWord[j].1 != word[j].1 {
+                                        lettersBeingDeleted.append((word[j].0, word[j].1, word[j].2))
+                                        newAnswerWord[j] = (answerWord[j].0, answerWord[j].1, word[j].2)
+                                    }
+                                }
+
+                                selectedWords.removeLast()
+                                selectedWords.append(newAnswerWord)
+                                if lettersBeingDeleted.count == 0 {
+                                    return(true, i, nil, newAnswerWord)
+                                } else {
+                                    print("lettersBeingDeleted \(lettersBeingDeleted)")
+                                    print("newAnswerWord \(newAnswerWord)")
+
+                                    return(true, i, lettersBeingDeleted, newAnswerWord)
+                                }
+                            }
+                            return(true, i ,nil, nil)
                         }
                     }
                 }
             }
-            return(false,nil)
+            return(false, nil, nil, nil)
             
         }
         
@@ -675,7 +756,7 @@ class GameViewController: UIViewController {
                     stringWord = stringWord + String(answersOneString[answersOneString.startIndex.advancedBy(route[squares[i].0][squares[i].1])])
                 }
                 var translation:String
-                if giveTranslation {
+                if giveTranslation && needsTranslation{
                     translation = "\(findTranslation(currentWord!)) = "
                 } else {
                     translation = ""
@@ -733,13 +814,10 @@ class GameViewController: UIViewController {
             }
     }
     
-    
-    
-    
 
 }
     
-    func routeArrayOfRows(array: Array<(Int,Int)>, numberOfRows: Int , numberOfCols: Int) -> Array<Array<Int>> {
+func routeArrayOfRows(array: [(Int,Int)], numberOfRows: Int , numberOfCols: Int) -> [[Int]] {
         var arrayOfRows = [[Int]](count: numberOfRows, repeatedValue: [Int](count: numberOfCols, repeatedValue: 0))
         for m in 0...array.count-1 {
             let i = array[m].0

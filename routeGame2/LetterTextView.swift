@@ -20,3 +20,9 @@ class LetterSquareViewView: UIView {
         return false
     }
 }
+
+class ViewToStopScrolling:UIView{
+    override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
+        return true
+    }
+}

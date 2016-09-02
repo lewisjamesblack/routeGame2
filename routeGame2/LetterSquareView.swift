@@ -12,7 +12,7 @@ class LetterSquareView: UIView {
     
     var letter:String!
     var arrayOfViews: Array<UIView> = []
-    var newView:UIView
+    var selectingView:UIView
     var lastColor:UIColor?
     
     @IBOutlet weak var letterSquareViewView: LetterSquareViewView!
@@ -20,7 +20,7 @@ class LetterSquareView: UIView {
     @IBOutlet weak var letterLbl: UILabel!
     
     init(frame: CGRect, letter: String) {
-        self.newView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
+        self.selectingView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
         self.lastColor = nil
         super.init(frame: frame)
         
@@ -42,7 +42,7 @@ class LetterSquareView: UIView {
     }
     
     func changeSelectionColor(color: UIColor){
-        newView.backgroundColor = color
+        selectingView.backgroundColor = color
     }
     
     func makeViewsFor(borderType: BorderType, color: UIColor) {
@@ -123,17 +123,17 @@ class LetterSquareView: UIView {
             letterSquareViewView.addSubview(whiteSpaceView)
         }
         
-        newView.translatesAutoresizingMaskIntoConstraints = false
-        newView.backgroundColor = color
-        newView.layer.cornerRadius = squareViewSelectionCornerRadius
-        newView.clipsToBounds = true
-        letterSquareViewView.addSubview(newView)
-        letterSquareViewView.sendSubviewToBack(newView)
+        selectingView.translatesAutoresizingMaskIntoConstraints = false
+        selectingView.backgroundColor = color
+        selectingView.layer.cornerRadius = squareViewSelectionCornerRadius
+        selectingView.clipsToBounds = true
+        letterSquareViewView.addSubview(selectingView)
+        letterSquareViewView.sendSubviewToBack(selectingView)
         
-        let leftContraints = NSLayoutConstraint(item: newView, attribute:.LeadingMargin, relatedBy: .Equal, toItem: letterSquareViewView, attribute: .LeadingMargin, multiplier: 1.0, constant: left)
-        let rightContraints = NSLayoutConstraint(item: newView, attribute:.TrailingMargin, relatedBy: .Equal, toItem: letterSquareViewView, attribute: .TrailingMargin, multiplier: 1.0, constant: -right)
-        let topContraints = NSLayoutConstraint(item: newView, attribute:.TopMargin, relatedBy: .Equal, toItem: letterSquareViewView, attribute: .TopMargin, multiplier: 1.0,constant: top)
-        let bottomContraints = NSLayoutConstraint(item: newView, attribute:.BottomMargin, relatedBy: .Equal, toItem: letterSquareViewView, attribute: .BottomMargin, multiplier: 1.0,constant: -bottom)
+        let leftContraints = NSLayoutConstraint(item: selectingView, attribute:.LeadingMargin, relatedBy: .Equal, toItem: letterSquareViewView, attribute: .LeadingMargin, multiplier: 1.0, constant: left)
+        let rightContraints = NSLayoutConstraint(item: selectingView, attribute:.TrailingMargin, relatedBy: .Equal, toItem: letterSquareViewView, attribute: .TrailingMargin, multiplier: 1.0, constant: -right)
+        let topContraints = NSLayoutConstraint(item: selectingView, attribute:.TopMargin, relatedBy: .Equal, toItem: letterSquareViewView, attribute: .TopMargin, multiplier: 1.0,constant: top)
+        let bottomContraints = NSLayoutConstraint(item: selectingView, attribute:.BottomMargin, relatedBy: .Equal, toItem: letterSquareViewView, attribute: .BottomMargin, multiplier: 1.0,constant: -bottom)
         
         NSLayoutConstraint.activateConstraints([leftContraints, rightContraints, topContraints, bottomContraints])
 
