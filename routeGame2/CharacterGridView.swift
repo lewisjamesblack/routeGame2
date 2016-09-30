@@ -42,7 +42,7 @@ class CharacterGridView: UIView {
             for j in 0...numberOfRows - 1 {
                 let x = firstLetterDistanceFromSide + CGFloat(i) * letterSquareViewWidth
                 let y = firstLetterDistanceFromTop + CGFloat(j) * letterSquareViewHeight
-                let index = answersOneString.startIndex.advancedBy(route[i][j])
+                let index = answersOneString.index(answersOneString.startIndex, offsetBy: route[i][j])
                 let placeInRoute = answersOneString[index]
                 
                 let letter = "\(placeInRoute)"
@@ -55,18 +55,18 @@ class CharacterGridView: UIView {
         }
     }    
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        NSNotificationCenter.defaultCenter().postNotificationName(TOUCH_BEGAN, object: touches)
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        NotificationCenter.default.post(name: Notification.Name(rawValue: TOUCH_BEGAN), object: touches)
         
     }
     
-    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        NSNotificationCenter.defaultCenter().postNotificationName(TOUCH_MOVED, object: touches)
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        NotificationCenter.default.post(name: Notification.Name(rawValue: TOUCH_MOVED), object: touches)
     
     }
     
-    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        NSNotificationCenter.defaultCenter().postNotificationName(TOUCH_ENDED, object: touches)
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        NotificationCenter.default.post(name: Notification.Name(rawValue: TOUCH_ENDED), object: touches)
     }
 }
 

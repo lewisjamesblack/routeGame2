@@ -10,19 +10,19 @@ import Foundation
 import UIKit
 
 class LetterSquareViewTextLabel: UILabel {
-    override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
+    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         return false
     }
 }
 
 class LetterSquareViewView: UIView {
-    override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
+    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         return false
     }
 }
 
 class ViewToStopScrolling:UIView{
-    override func pointInside(point: CGPoint, withEvent event: UIEvent?) -> Bool {
+    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         return true
     }
 }

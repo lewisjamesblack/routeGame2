@@ -18,8 +18,8 @@ let squareViewSelectionWidth:CGFloat = 15
 let squareViewSelectionCornerRadius: CGFloat = 10
 let squareViewSelectionInsideCornerRadius: CGFloat = 3
 
-let gridBackgroundColour = UIColor.whiteColor()
-let deleteColourChangeLetterLabelColor = UIColor.lightGrayColor()
+let gridBackgroundColour = UIColor.white
+let deleteColourChangeLetterLabelColor = UIColor.lightGray
 
 //let colours = [UIColor.redColor(), UIColor.blueColor(), UIColor.greenColor()]
 let colours = [UIColor(netHex:0x59ABE3), UIColor(netHex:0x9A12B3), UIColor(netHex:0xBF55EC), UIColor(netHex:0x9B59B6), UIColor(netHex:0x59ABE3), UIColor(netHex:0x81CFE0), UIColor(netHex:0x22A7F0), UIColor(netHex:0x4183D7), UIColor(netHex:0x81CFE0), UIColor(netHex:0x19B5FE), UIColor(netHex:0x3498DB), UIColor(netHex:0x336E7B)]
@@ -33,3 +33,5 @@ let TOUCH_MOVED = "touchMoved"
 let TOUCH_ENDED = "touchEnded"
 
 let LETTER_SELECTED = "letterSelected"
+
+let SEGUE_GAME_SELECTED = "gameSelected"
