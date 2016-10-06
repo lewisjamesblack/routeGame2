@@ -10,13 +10,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "routeGame2/GameViewController.swift"
-            timestampString = "496779266.5814"
+            timestampString = "497389801.883414"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "331"
-            endingLineNumber = "331"
-            landmarkName = "isUnSelectedSquareAllowed(_:startOfTouch:)"
-            landmarkType = "9">
+            startingLineNumber = "138"
+            endingLineNumber = "138"
+            landmarkName = "viewDidLoad()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -26,13 +26,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "routeGame2/GameViewController.swift"
-            timestampString = "496780178.282243"
+            timestampString = "497454535.047813"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "335"
-            endingLineNumber = "335"
-            landmarkName = "isUnSelectedSquareAllowed(_:startOfTouch:)"
-            landmarkType = "9">
+            startingLineNumber = "822"
+            endingLineNumber = "822"
+            landmarkName = "nextLetterButtonPressed(_:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -42,13 +42,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "routeGame2/GameViewController.swift"
-            timestampString = "496780178.282243"
+            timestampString = "497454535.047813"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "339"
-            endingLineNumber = "339"
-            landmarkName = "isUnSelectedSquareAllowed(_:startOfTouch:)"
-            landmarkType = "9">
+            startingLineNumber = "827"
+            endingLineNumber = "827"
+            landmarkName = "nextLetterButtonPressed(_:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -58,60 +58,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "routeGame2/GameViewController.swift"
-            timestampString = "496780178.282243"
+            timestampString = "497413239.750745"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "347"
-            endingLineNumber = "347"
-            landmarkName = "isUnSelectedSquareAllowed(_:startOfTouch:)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "routeGame2/GameViewController.swift"
-            timestampString = "496780137.165221"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "333"
-            endingLineNumber = "333"
-            landmarkName = "isUnSelectedSquareAllowed(_:startOfTouch:)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "routeGame2/GameViewController.swift"
-            timestampString = "496780142.817298"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "336"
-            endingLineNumber = "336"
-            landmarkName = "isUnSelectedSquareAllowed(_:startOfTouch:)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "routeGame2/GameViewController.swift"
-            timestampString = "496937226.573134"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "332"
-            endingLineNumber = "332"
-            landmarkName = "isUnSelectedSquareAllowed(_:startOfTouch:)"
+            startingLineNumber = "509"
+            endingLineNumber = "509"
+            landmarkName = "whereIsSquare(_:)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

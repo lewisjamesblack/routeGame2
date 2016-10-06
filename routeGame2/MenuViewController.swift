@@ -56,8 +56,6 @@ class MenuViewController: UIViewController, UITableViewDelegate, UITableViewData
             
             if let sent = sender as? Game {
                 gameViewController.game = sent
-                
-                
             }
         }
         

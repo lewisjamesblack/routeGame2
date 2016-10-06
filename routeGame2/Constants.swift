@@ -13,8 +13,9 @@ let firstLetterDistanceFromTop:CGFloat = 0
 
 let letterSquareViewWidth:CGFloat = 50 //change in .xib file
 let letterSquareViewHeight:CGFloat = 50 //change in .xib file
+let letterSquareViewWidthPercentage:CGFloat = 0.7
 let squareViewSelectionOutside:CGFloat = -20
-let squareViewSelectionWidth:CGFloat = 15
+let squareViewSelectionWidth:CGFloat = 10
 let squareViewSelectionCornerRadius: CGFloat = 10
 let squareViewSelectionInsideCornerRadius: CGFloat = 3
 

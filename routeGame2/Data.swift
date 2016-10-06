@@ -29,7 +29,7 @@ class Data {
     
     let data5 = ["France, Belgium, Netherlands, Spain, Czech Republic, Luxemburg, Denmark, United States, Switzerland, Jersey, Norway, Hungary, Slovakia, Italy, Vatican City, Slovenia, Croatia, Morocco, United Arab Emirates, India", false, "Countries In Order Lewis Visited Them"] as [Any]
     
-    let data6 = ["die Pommes, Chips, der Reis, Rice, die Nudel, Pasta,  der Kaffee, Coffee, der Thunfisch, Tuna, der Lachs, Salmon,  das Mehl, Flour, der Honig, Honey, die Nuss, Nut, das Brot, Bread, der Käse, Cheese, die Zwiebel, Onion,  die Bohnen, Beans, die Erbsen, Peas, die Kartoffel, Potato, die Zucchini, Courgette, die Paprika, Pepper, der Speck, Bacon, das Hähnchen, Chicken", true] as [Any]
+    let data6 = ["die Pommes, Chips, der Reis, Rice, die Nudel, Pasta, der Kaffee, Coffee, der Thunfisch, Tuna, der Lachs, Salmon,  das Mehl, Flour, der Honig, Honey, die Nuss, Nut, das Brot, Bread, der Käse, Cheese, die Zwiebel, Onion,  die Bohnen, Beans, die Erbsen, Peas, die Kartoffel, Potato, die Zucchini, Courgette, die Paprika, Pepper, der Speck, Bacon, das Hähnchen, Chicken", true] as [Any]
     
     let data7 = ["Pommes, Chips, Reis, Rice, Nudel, Pasta, Kaffee, Coffee, Thunfisch, Tuna, Lachs, Salmon, Mehl, Flour, Honig, Honey, Nuss, Nut, Brot, Bread,Käse, Cheese, Zwiebel, Onion, Bohnen, Beans, Erbsen, Peas, Kartoffel, Potato, Zucchini, Courgette, Paprika, Pepper, Speck, Bacon, Hähnchen, Chicken, Pfefferminztee, Peppermint Tea, Schweinefleisch, Pork, Öl, Oil, Knoblauch, Garlic, Wassermelone, Watermelon, Birne, Pear", true] as [Any]
     
@@ -85,9 +85,7 @@ class Data {
             newArray.append(translationArray[i])
 
         }
-//        for var i = difference; i < translationArray.count; i = i + 2 {
-//        }
-//        
+
         let stringRepresentation = newArray.joined(separator: ", ")
         return stringRepresentation
     }
