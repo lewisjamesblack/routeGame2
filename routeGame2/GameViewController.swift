@@ -174,24 +174,13 @@ class GameViewController: UIViewController {
             }
         }
         
-//        func makeBordersOfLastTwoSquares(){
-//            let count = selectedWords.count
-//            let lastCount = selectedWords[count - 1].count
-//            if count > 0 {
-//                makeBordersForSquare(selectedWords[count - 1][lastCount - 1])
-//                if lastCount > 1 {
-//                    makeBordersForSquare(selectedWords[count - 1][lastCount - 2])
-//                }
-//            }
-//        }
         
         func makeBordersOfLast(_ squares:Int){
-            let count = selectedWords.count
-            let letterCount = selectedWords[count - 1].count
+            let letterCount = selectedWords[currentWord!].count
             
-            if count > 0 && letterCount - squares >= 0 && letterCount > 0 {
+            if currentWord! >= 0 && letterCount - squares >= 0 && letterCount > 0 {
                 for i in 0..<squares {
-                    makeBordersForSquare(selectedWords[count - 1][letterCount - 1 - i])
+                    makeBordersForSquare(selectedWords[currentWord!][letterCount - 1 - i])
                 }
             }
         }
@@ -286,7 +275,6 @@ class GameViewController: UIViewController {
                 return (Square.selectedInPreviousWord, isSquareSelected(square).1)
             } else {
                 if isUnSelectedSquareAllowed(square, startOfTouch: startOfTouch) {
-                    print("return unselected allowed")
                     return (Square.unSelectedAllowed, BorderType.unknown)
                 }
                 return (Square.unSelectedNotAllowed, BorderType.unknown)
@@ -356,7 +344,7 @@ class GameViewController: UIViewController {
             } else if currentWord != nil {
                 
                 if selectedWords.count != 0 {
-                    let highLightedWord = selectedWords[selectedWords.count - 1]
+                    let highLightedWord = selectedWords[currentWord!]
                     if highLightedWord.count > maxWordLength - 1 {
                         return false
                     }
@@ -390,18 +378,30 @@ class GameViewController: UIViewController {
                 }
                 currentWord = selectedWords.count - 1
             } else {
-                selectedWords[selectedWords.count - 1].append(square)
+                selectedWords[currentWord!].append(square)
             }
             endOfSelection(square)
         }
         
-        func putBorderOnPreviousSquare(_ square:(Int,Int, BorderType)){
-            if selectedWords[selectedWords.count - 1].count == 2 {
+        func putBorderOnPreviousSquare(_ square:(Int,Int, BorderType), hint:Bool){
+            var currentWordArray: Array<(Int,Int, BorderType)>?
+            
+            if hint {
+                currentWordArray = []
+
+                for i in 0..<coordsOfAnswersArray[currentWord! + 1].count {
+                    currentWordArray!.append((coordsOfAnswersArray[currentWord! + 1][i].0, coordsOfAnswersArray[currentWord! + 1][i].1, BorderType.endFromTop))
+                }
+                print(currentWordArray)
+            } else {
+                currentWordArray = selectedWords[currentWord!]
+            }
+            
+            if currentWordArray!.count == 2 {
                 //all four are mistakes that work because it's the first one, not sure why
-                let count = selectedWords.count - 1
                 
                 func setBorder(_ borderType:BorderType){
-                    selectedWords[count][0].2 = borderType
+                    selectedWords[currentWord!][0].2 = borderType
                 }
                 
                 switch whereIsSquare(square){
@@ -592,11 +592,10 @@ class GameViewController: UIViewController {
             
             let word = whatWordIsSquareIn(square)!.0
             let letter = whatWordIsSquareIn(square)!.1
-            let mostRecentWord = selectedWords.count - 1
-            let mostRecentLetter = selectedWords[mostRecentWord].count - 1
+            let mostRecentLetter = selectedWords[currentWord!].count - 1
             
             if selectedWords[word].count != 1 {
-                if word == mostRecentWord && letter != mostRecentLetter {
+                if word == currentWord! && letter != mostRecentLetter {
                     let letterBeingUnSelected = letter + 1
                     let squaresBeingDeleted = selectedWords[word][letterBeingUnSelected...mostRecentLetter]
                     
@@ -623,7 +622,7 @@ class GameViewController: UIViewController {
 
         
         func endOfSelection(_ square:(Int,Int, BorderType)){
-            putBorderOnPreviousSquare(square)
+            putBorderOnPreviousSquare(square, hint: false)
             putEndBorderOnCurrentSquare(square)
             makeBordersOfLast(2)
             
@@ -640,15 +639,12 @@ class GameViewController: UIViewController {
                         let squareView = arrayOfRows[i][j]
                         makeBorders(squareView, borderType: BorderType.none)
                     }
-                    let wordsCount = selectedWords.count
-                    let lettersCount = selectedWords[wordsCount - 1].count
+                    let lettersCount = selectedWords[currentWord!].count
                     if count > 0 {
                         for i in 0..<lettersCount {
-                            putBorderOnPreviousSquare(selectedWords[wordsCount - 1][lettersCount - i - 1])
-                            print("getting chnage is \(selectedWords[wordsCount - 1][lettersCount - i - 1]))")
+                            putBorderOnPreviousSquare(selectedWords[currentWord!][lettersCount - i - 1], hint:false)
                         }
                     }
-                    print(selectedWords)
                     makeBordersOfLast(lettersCount - 1)
                 }
             }
@@ -680,7 +676,7 @@ class GameViewController: UIViewController {
      
         func isWordCorrect(_ wordIndex:Int) -> (Bool,Int?,[(Int,Int,BorderType)]?,[(Int,Int,BorderType)]?) {
             
-            if wordIndex <= selectedWords.count - 1 {
+            if wordIndex <= currentWord! {
                 let word = selectedWords[wordIndex]
                 for i in 0..<coordsOfAnswersArray.count {
                     let answerWord = coordsOfAnswersArray[i]
@@ -821,9 +817,9 @@ class GameViewController: UIViewController {
         
         if hintsAskedForSoFar < wordCount {
             let letterBeingShown = coordsOfAnswersArray[count][hintsAskedForSoFar]
-            print(letterBeingShown)
-            let borderType = BorderType.endFromBottom
-            characterGridView!.arrayOfRows[letterBeingShown.0][letterBeingShown.1].makeViewsFor(borderType, color: color, hint:true)
+            
+            
+            characterGridView!.arrayOfRows[letterBeingShown.0][letterBeingShown.1].makeViewsFor(hintBorderType, color: color, hint:true)
             hintsAskedForSoFar += 1
         } else {
             print("word correct")
