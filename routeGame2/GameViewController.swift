@@ -50,6 +50,16 @@ class GameViewController: UIViewController {
     var autoCorrectWord:Bool = true
     var onlySelectSurroundingLetters:Bool = true //basically only select the letters above/below/sides of last letter
     
+    var needsTranslation:Bool = false
+    var answersArray: Array<String> = []
+    var routeCoOrds: [(Int, Int)] = []
+    var answersOneString: String = ""
+    var route: [[Int]] = []
+    var stringWord:String = "" //could be problem
+    var dataBeforeTranslation: [AnyObject] = []
+    var minWordLength: Int = 0
+ 
+    
     override func viewDidLoad() {
         
         super.viewDidLoad()
@@ -57,12 +67,12 @@ class GameViewController: UIViewController {
 
         let numberOfCols = game.numberOfCols
         let numberOfRows = game.numberOfRows
-        let routeCoOrds = game.routeCoOrds
+        routeCoOrds = game.routeCoOrds
         let minWordLengthIfNoSmaller = game.minWordLengthIfNoSmaller
         let maxWordLengthIfNoBigger = game.maxWordLengthIfNoBigger
-        let dataBeforeTranslation = game.dataBeforeTranslation
+        dataBeforeTranslation = game.dataBeforeTranslation
         
-        let needsTranslation:Bool = (dataBeforeTranslation[1] as! Bool)
+        needsTranslation = (dataBeforeTranslation[1] as! Bool)
         let height = firstLetterDistanceFromTop * 2 + letterSquareViewHeight * CGFloat(numberOfRows)
         let width = firstLetterDistanceFromSide * 2 + letterSquareViewWidth * CGFloat(numberOfCols)
         
@@ -75,7 +85,7 @@ class GameViewController: UIViewController {
         }
         
         let data = makeData()
-        let answersArray = Data().makeArrayOfAnswers(data)
+        answersArray = Data().makeArrayOfAnswers(data)
         
         func maxWordLengthFunc() -> Int {
             var maxWordSoFar = maxWordLengthIfNoBigger
@@ -97,14 +107,13 @@ class GameViewController: UIViewController {
             return minWordSoFar
         }
         
-        let minWordLength = minWordLengthFunc()
+        minWordLength = minWordLengthFunc()
         let maxWordLength = maxWordLengthFunc()
         
         var wordStart = 0
-        let answersOneString = answersArray.joined(separator: "")
-        let route = routeArrayOfRows(routeCoOrds, numberOfRows: numberOfRows, numberOfCols: numberOfCols)
-        var wordsFound = [Bool](repeating: false, count: answersArray.count)
-        var stringWord:String = ""
+        answersOneString = answersArray.joined(separator: "")
+        route = routeArrayOfRows(routeCoOrds, numberOfRows: numberOfRows, numberOfCols: numberOfCols)
+        wordsFound = [Bool](repeating: false, count: answersArray.count)
         
         for i in 0..<answersArray.count{
             let wordLength = answersArray[i].characters.count
@@ -124,17 +133,7 @@ class GameViewController: UIViewController {
             nextLetterButton.isHidden = true
         }
         
-        let arrayOfRows = characterGridView!.arrayOfRows
-        
-        //here is probably where the amazing bit of code to sort scrolling problem will go
-                
-
-      //  characterGridView.addGestureRecognizer(scrollView.panGestureRecognizer)
-//        let viewToStopStuff = ViewToStopScrolling(frame: CGRect(x: 0, y: 0, width: 150, height: 150))
-//        viewToStopStuff.backgroundColor = UIColor.blueColor()
-//        scrollView.addSubview(viewToStopStuff)
-//        
-       // scrollView.delaysContentTouches = false
+        arrayOfRows = characterGridView!.arrayOfRows
         
         
         if scrollingOnlyTwoFinger {
@@ -175,46 +174,9 @@ class GameViewController: UIViewController {
         }
         
         
-        func makeBordersOfLast(_ squares:Int){
-            let letterCount = selectedWords[currentWord!].count
-            
-            if currentWord! >= 0 && letterCount - squares >= 0 && letterCount > 0 {
-                for i in 0..<squares {
-                    makeBordersForSquare(selectedWords[currentWord!][letterCount - 1 - i])
-                }
-            }
-        }
-
-        func makeBordersForSquare(_ square:(Int,Int, BorderType)){
-            let i = square.0
-            let j = square.1
-            let borderType = square.2
-            let squareView = arrayOfRows[i][j]
-            
-            makeBorders(squareView, borderType: borderType)
-        }
         
         
-        func wordSelectionOver(){
-            isWordBeingSelectedCorrect = false
-
-            if currentWord != nil {
-                if isWordCorrect(currentWord!).0 == false {
-                    if selectedWords[currentWord!].count < minWordLength {
-                        deSelectWord(currentWord!)
-                    }else if ifWordIncorrectUnselect {
-                        deSelectWord(currentWord!)
-                    }
-                    translationText.text = ""
-                } else {
-                    hintsAskedForSoFar = 0
-                    currentColor += 1
-                }
-            }
-            
-            currentSquare = nil
-            currentWord = nil
-        }
+        
 
         //Establish where touch is
         
@@ -307,17 +269,7 @@ class GameViewController: UIViewController {
             return false
         }
         
-        func whatWordIsSquareIn(_ square:(Int,Int, BorderType)) -> (Int,Int)? {
-            for i in 0..<selectedWords.count {
-                for j in 0..<selectedWords[i].count {
-                    if square.0 == selectedWords[i][j].0 && square.1 == selectedWords[i][j].1 {
-                        return (i,j)
-                    }
-                }
-            }
-            return nil
-        }
-        
+       
         func isUnSelectedSquareAllowed(_ square:(Int,Int, BorderType), startOfTouch: Bool) -> Bool {
             let newI = square.0
             let newJ = square.1
@@ -369,164 +321,8 @@ class GameViewController: UIViewController {
         
         //Do stuff with square
         //Select
-        func selectSquare(_ square:(Int,Int, BorderType), startOfTouch: Bool){
-            if startOfTouch {
-                if selectedWords.count == 0 {
-                    selectedWords = [[square]]
-                } else  {
-                    selectedWords.append([square])
-                }
-                currentWord = selectedWords.count - 1
-            } else {
-                selectedWords[currentWord!].append(square)
-            }
-            endOfSelection(square)
-        }
+       
         
-        func putBorderOnPreviousSquare(_ square:(Int,Int, BorderType), hint:Bool){
-            var currentWordArray: Array<(Int,Int, BorderType)>?
-            
-            if hint {
-                currentWordArray = []
-
-                for i in 0..<coordsOfAnswersArray[currentWord! + 1].count {
-                    currentWordArray!.append((coordsOfAnswersArray[currentWord! + 1][i].0, coordsOfAnswersArray[currentWord! + 1][i].1, BorderType.endFromTop))
-                }
-                print(currentWordArray)
-            } else {
-                currentWordArray = selectedWords[currentWord!]
-            }
-            
-            if currentWordArray!.count == 2 {
-                //all four are mistakes that work because it's the first one, not sure why
-                
-                func setBorder(_ borderType:BorderType){
-                    selectedWords[currentWord!][0].2 = borderType
-                }
-                
-                switch whereIsSquare(square){
-                case SquarePosition.aboveMiddle: setBorder(BorderType.endFromBottom)
-                case SquarePosition.belowMiddle: setBorder(BorderType.endFromTop)
-                case SquarePosition.middleLeft: setBorder(BorderType.endFromRight)
-                case SquarePosition.middleRight: setBorder(BorderType.endFromLeft)
-                default: break
-                }
-
-            } else {
-                let previousSquareWord = whatIsPreviousSquareWL(square)?.0
-                let previousSquareLetter = whatIsPreviousSquareWL(square)?.1
-                
-                func changeBorderTypeTo(_ borderType: BorderType) {
-                    selectedWords[previousSquareWord!][previousSquareLetter!].2 = borderType
-                }
-                
-                let word = whatWordIsSquareIn(square)!.0
-                let letter = whatWordIsSquareIn(square)!.1
-                if letter > 0 {
-                    let previousSquare = selectedWords[word][letter - 1]
-                    let oneBehind = whereIsSquare(square)
-                    let twoBehind = whereIsSquare(previousSquare)
-                    if (oneBehind == SquarePosition.aboveMiddle && twoBehind == SquarePosition.aboveMiddle) || (oneBehind == SquarePosition.belowMiddle && twoBehind == SquarePosition.belowMiddle) {
-                        changeBorderTypeTo(BorderType.tubeVertical)
-                    } else if (oneBehind == SquarePosition.middleLeft && twoBehind == SquarePosition.aboveMiddle) || (oneBehind == SquarePosition.belowMiddle && twoBehind == SquarePosition.middleRight) {
-                        changeBorderTypeTo(BorderType.cornerTopToRight)
-                    } else if (oneBehind == SquarePosition.middleRight && twoBehind == SquarePosition.aboveMiddle) || (oneBehind == SquarePosition.belowMiddle && twoBehind == SquarePosition.middleLeft) {
-                        changeBorderTypeTo(BorderType.cornerTopToLeft)
-                    } else if (oneBehind == SquarePosition.middleLeft && twoBehind == SquarePosition.middleLeft) || (oneBehind == SquarePosition.middleRight && twoBehind == SquarePosition.middleRight) {
-                        changeBorderTypeTo(BorderType.tubeHorizontal)
-                    } else if (oneBehind == SquarePosition.middleRight && twoBehind == SquarePosition.belowMiddle) || (oneBehind == SquarePosition.aboveMiddle && twoBehind == SquarePosition.middleLeft) {
-                        changeBorderTypeTo(BorderType.cornerBottomToLeft)
-                    } else if (oneBehind == SquarePosition.middleLeft && twoBehind == SquarePosition.belowMiddle) || (oneBehind == SquarePosition.aboveMiddle && twoBehind == SquarePosition.middleRight) {
-                        changeBorderTypeTo(BorderType.cornerBottomToRight)
-                    }
-                }
-            }
-        }
-        
-
-        func putEndBorderOnCurrentSquare(_ square:(Int,Int, BorderType)){
-            let oneBehind = whereIsSquare(square)
-            let (word,letter) = whatWordIsSquareIn(square)!
-            
-            func changeBorderTypeTo(_ borderType: BorderType) {
-                selectedWords[word][letter].2 = borderType
-            }
-            
-            switch oneBehind {
-            case SquarePosition.aboveMiddle: changeBorderTypeTo(BorderType.endFromTop)
-            case SquarePosition.belowMiddle: changeBorderTypeTo(BorderType.endFromBottom)
-            case SquarePosition.middleLeft: changeBorderTypeTo(BorderType.endFromLeft)
-            case SquarePosition.middleRight: changeBorderTypeTo(BorderType.endFromRight)
-            default: break
-            }
-        }
-
-        func whatIsPreviousSquareIJ(_ square:(Int,Int, BorderType)) -> (Int,Int)? {
-            let word = whatWordIsSquareIn(square)!.0
-            let letter = whatWordIsSquareIn(square)!.1
-            if letter > 0 {
-                return (selectedWords[word][letter - 1].0, selectedWords[word][letter - 1].1)
-            }
-            return nil
-        }
-        
-        func whatIsPreviousSquareWL(_ square:(Int,Int, BorderType)) -> (Int,Int)? {
-            let word = whatWordIsSquareIn(square)!.0
-            let letter = whatWordIsSquareIn(square)!.1
-            
-            if letter > 0 {
-                return (word, letter - 1)
-            }
-            return nil
-        }
-        
-        
-        //where is square in relation to square before it
-        func whereIsSquare(_ square:(Int,Int, BorderType)) -> SquarePosition {
-            
-            if let previousSquareI = whatIsPreviousSquareIJ(square)?.0 {
-                if let previousSquareJ = whatIsPreviousSquareIJ(square)?.1 {
-                   
-                    let iDifference = previousSquareI - square.0
-                    let jDifference = previousSquareJ - square.1
-                    
-                    if iDifference == 1 && jDifference == 1 {
-                        return SquarePosition.belowRight
-                    } else if iDifference == 0 && jDifference == 1 {
-                        return SquarePosition.belowMiddle
-                    } else if iDifference == -1 && jDifference == 1 {
-                        return SquarePosition.belowLeft
-                    } else if iDifference == 1 && jDifference == 0 {
-                        return SquarePosition.middleRight
-                    } else if iDifference == 0 && jDifference == 0 {
-                        return SquarePosition.error
-                    } else if iDifference == -1 && jDifference == 0 {
-                        return SquarePosition.middleLeft
-                    } else if iDifference == 1 && jDifference == -1 {
-                        return SquarePosition.aboveRight
-                    } else if iDifference == 0 && jDifference == -1 {
-                        return SquarePosition.aboveMiddle
-                    } else if iDifference == -1 && jDifference == -1 {
-                        return SquarePosition.aboveLeft
-                    }
-                }
-            }
-            return SquarePosition.error
-            
-        }
-        
-        enum SquarePosition {
-            case aboveLeft
-            case aboveMiddle
-            case aboveRight
-            case middleLeft
-            case middleRight
-            case belowLeft
-            case belowMiddle
-            case belowRight
-            
-            case error
-        }
         
         //Delete
         
@@ -541,7 +337,7 @@ class GameViewController: UIViewController {
         func deleteWordAlert(_ title: String, msg: String, word:Int) {
             let alert = UIAlertController(title: title, message: msg, preferredStyle: .alert)
             let action = UIAlertAction(title: "Ok", style: .default, handler: {(alert: UIAlertAction!) in
-                deSelectWord(word)
+                self.deSelectWord(word)
             })
             alert.addAction(action)
             
@@ -553,19 +349,6 @@ class GameViewController: UIViewController {
             
             colourChangeBeforeDeletion(word)
             self.present(alert, animated: true, completion: nil)
-        }
-        
-        func deSelectWord(_ word:Int){
-            
-            for i in 0..<selectedWords[word].count {
-                unHighlightSquare(selectedWords[word][i])
-            }
-            selectedWords.remove(at: word)
-            currentColor -= 1
-        }
-        
-        func unHighlightSquare(_ square:(Int,Int, BorderType)) {
-            makeBorders(arrayOfRows[square.0][square.1], borderType: BorderType.none)
         }
         
         func colourChangeBeforeDeletion(_ word:Int){
@@ -620,167 +403,8 @@ class GameViewController: UIViewController {
         }
         
 
-        
-        func endOfSelection(_ square:(Int,Int, BorderType)){
-            putBorderOnPreviousSquare(square, hint: false)
-            putEndBorderOnCurrentSquare(square)
-            makeBordersOfLast(2)
-            
-            let wordCorrect = isWordCorrect(whatWordIsSquareIn(square)!.0)
-            if autoCorrectWord {
-                if wordCorrect.2 != nil {
-                    var lettersBeingDeleted = wordCorrect.2!
-                    let count = lettersBeingDeleted.count
-                    putEndBorderOnCurrentSquare(selectedWords.last!.last!)
-                    for i in 0..<count {
-                        let square = lettersBeingDeleted[i]
-                        let i = square.0
-                        let j = square.1
-                        let squareView = arrayOfRows[i][j]
-                        makeBorders(squareView, borderType: BorderType.none)
-                    }
-                    let lettersCount = selectedWords[currentWord!].count
-                    if count > 0 {
-                        for i in 0..<lettersCount {
-                            putBorderOnPreviousSquare(selectedWords[currentWord!][lettersCount - i - 1], hint:false)
-                        }
-                    }
-                    makeBordersOfLast(lettersCount - 1)
-                }
-            }
-            
-            if spellOutNameAtBottom {
-                changeTranslatedText()
-            }
-            
-            if wordCorrect.0 {
-                isWordBeingSelectedCorrect = true
-                
-                let wordNumber = wordCorrect.1!
-                wordsFound[wordNumber] = true
-                
-                let dataWord = answersArray[wordNumber]
-                if needsTranslation {
-                    self.translationText.text = "\(findTranslation(self.currentWord!).capitalized) = \(dataWord.capitalized)"
-                } else {
-                    if sayIfCorrect {
-                        self.translationText.text = "\(dataWord.capitalized) IS CORRECT!"
-                    }
-                }
-                if isWholeThingTrue() {
-                    translationText.text = "Whole thing true"
-                }
-            }
-        }
-        // check if Words correct
-     
-        func isWordCorrect(_ wordIndex:Int) -> (Bool,Int?,[(Int,Int,BorderType)]?,[(Int,Int,BorderType)]?) {
-            
-            if wordIndex <= currentWord! {
-                let word = selectedWords[wordIndex]
-                for i in 0..<coordsOfAnswersArray.count {
-                    let answerWord = coordsOfAnswersArray[i]
-                    if answerWord.count == word.count {
-                        var boolArray = [Bool]()
-                        for j in 0..<answerWord.count {
-                            if autoCorrectWord {
-                                func numberInRouteCoOrds(_ CoOrds:(Int,Int)) -> Int{
-                                    var found = 0  // <= will hold the index if it was found, or else will be nil
-                                    for i in (0..<routeCoOrds.count) {
-                                        if routeCoOrds[i] == CoOrds {
-                                            found = i
-                                        }
-                                    }
-                                    return found
-                                }
-                                let capitalized = answersOneString.capitalized
-                                let wordLetter = capitalized[capitalized.characters.index(capitalized.startIndex, offsetBy: numberInRouteCoOrds((word[j].0, word[j].1)))]
-                                let squareLetter = capitalized[capitalized.characters.index(capitalized.startIndex, offsetBy: numberInRouteCoOrds(answerWord[j]))]
-                              
-                                if wordLetter == squareLetter {
-                                    boolArray.append(true)
-                                } else {
-                                    boolArray.append(false)
-                                }
-                           } else {
-                                if answerWord[j].0 == word[j].0 && answerWord[j].1 == word[j].1 {
-                                    boolArray.append(true)
-                                } else {
-                                    boolArray.append(false)
-                                }
-                            }
-                        }
-                    
-                        if boolArray.contains(false) {
-                        
-                        } else {
-                            if autoCorrectWord {
-                                var newAnswerWord:[(Int,Int,BorderType)] = word
-                                var lettersBeingDeleted:[(Int,Int,BorderType)] = []
-                                for j in 0..<answerWord.count {
-                                    if answerWord[j].0 != word[j].0 || answerWord[j].1 != word[j].1 {
-                                        lettersBeingDeleted.append((word[j].0, word[j].1, word[j].2))
-                                        newAnswerWord[j] = (answerWord[j].0, answerWord[j].1, word[j].2)
-                                    }
-                                }
-
-                                selectedWords.removeLast()
-                                selectedWords.append(newAnswerWord)
-                                if lettersBeingDeleted.count == 0 {
-                                    return(true, i, nil, newAnswerWord)
-                                }
-                                return(true, i, lettersBeingDeleted, newAnswerWord)
-                                
-                            }
-                            return(true, i ,nil, nil)
-                        }
-                    }
-                }
-            }
-            return(false, nil, nil, nil)
-        }
-        
-        func isWholeThingTrue() -> Bool {
-            for i in 0..<wordsFound.count {
-                if wordsFound[i] == false {
-                    return false
-                }
-            }
-            return true
-        }
-        
-        //translaton text
         translationText.text = ""
-        
-        func changeTranslatedText(){
-            
-            if isWordCorrect(currentWord!).0 == false {
-                let squares = selectedWords[currentWord!]
-                for i in 0..<squares.count {
-                    stringWord = stringWord + String(answersOneString[answersOneString.characters.index(answersOneString.startIndex, offsetBy: route[squares[i].0][squares[i].1])])
-                }
-                var translation:String
-                if giveTranslation && needsTranslation{
-                    translation = "\(findTranslation(currentWord!)) = "
-                } else {
-                    translation = ""
-                }
-                translationText.text = "\(translation)\(stringWord.capitalized)"
-                
-            }
-            stringWord = ""
-        }
 
-        func findTranslation(_ wordNumber:Int) -> String{
-           return Data().makeArrayOfAnswers(Data().toDataString(dataBeforeTranslation[0] as! String, dataUsed: false))[currentWord!]
-        }
-        
-        //border configs
-        
-        func makeBorders(_ squareView: LetterSquareView, borderType: BorderType){
-            squareView.makeViewsFor(borderType, color: color, hint:false)
-        }
-    
         NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: TOUCH_BEGAN), object: nil, queue: nil, using: {( notification ) -> Void in
             if let touches: Set<UITouch> = notification.object as! Set<UITouch>? {
                 self.scrollView.isScrollEnabled = false
@@ -797,7 +421,7 @@ class GameViewController: UIViewController {
         
         NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: TOUCH_ENDED), object: nil, queue: nil, using: {( notification ) -> Void in
             self.scrollView.isScrollEnabled = true
-            wordSelectionOver()
+            self.wordSelectionOver()
         })
     }
     
@@ -812,22 +436,402 @@ class GameViewController: UIViewController {
     }
     
     @IBAction func nextLetterButtonPressed(_ sender: AnyObject) {
-        let count = selectedWords.count
-        let wordCount = coordsOfAnswersArray[count].count
+        var nextWordArray: Array<(Int,Int)> = []
         
-        if hintsAskedForSoFar < wordCount {
-            let letterBeingShown = coordsOfAnswersArray[count][hintsAskedForSoFar]
-            
-            
-            characterGridView!.arrayOfRows[letterBeingShown.0][letterBeingShown.1].makeViewsFor(hintBorderType, color: color, hint:true)
-            hintsAskedForSoFar += 1
+        
+        if let currentWord = currentWord {
+            print("currentWord = \(currentWord)")
+            nextWordArray = coordsOfAnswersArray[currentWord]
         } else {
-            print("word correct")
+            nextWordArray = coordsOfAnswersArray[selectedWords.count]
+        }
+        print("nextWord = \(nextWordArray)")
+        print("selectedWords =\(selectedWords)")
+        let hintWordCount = nextWordArray.count
+        
+        if hintsAskedForSoFar == hintWordCount {
+            wordSelectionOver()
+            hintsAskedForSoFar = 0
+        } else {
+            let word = nextWordArray[hintsAskedForSoFar]
+            let square = (word.0, word.1, BorderType.unknown)
+            print("square = \(square)")
+            
+            if hintsAskedForSoFar == 0 {
+                selectSquare(square, startOfTouch: true)
+            } else if hintsAskedForSoFar < hintWordCount {
+                selectSquare(square, startOfTouch: false)
+            }
+            hintsAskedForSoFar += 1
         }
     }
-}
+    
+    func wordSelectionOver(){
+        isWordBeingSelectedCorrect = false
+        
+        if let currentWord = currentWord {
+            if isWordCorrect(currentWord).0 == false {
+                if selectedWords[currentWord].count < minWordLength {
+                    deSelectWord(currentWord)
+                }else if ifWordIncorrectUnselect {
+                    deSelectWord(currentWord)
+                }
+                translationText.text = ""
+            } else {
+                currentColor += 1
+            }
+        }
+        currentSquare = nil
+        currentWord = nil
+    }
+    
+    
+    func deSelectWord(_ word:Int){
+        for i in 0..<selectedWords[word].count {
+            unHighlightSquare(selectedWords[word][i])
+        }
+        selectedWords.remove(at: word)
+        currentColor -= 1
+    }
+    
+    func unHighlightSquare(_ square:(Int,Int, BorderType)) {
+        makeBorders(arrayOfRows[square.0][square.1], borderType: BorderType.none)
+    }
+    
+    
+    
+    func isWordCorrect(_ wordIndex:Int) -> (Bool,Int?,[(Int,Int,BorderType)]?,[(Int,Int,BorderType)]?) {
+        
+        if wordIndex <= currentWord! {
+            let word = selectedWords[wordIndex]
+            for i in 0..<coordsOfAnswersArray.count {
+                let answerWord = coordsOfAnswersArray[i]
+                if answerWord.count == word.count {
+                    var boolArray = [Bool]()
+                    for j in 0..<answerWord.count {
+                        if autoCorrectWord {
+                            func numberInRouteCoOrds(_ CoOrds:(Int,Int)) -> Int{
+                                var found = 0  // <= will hold the index if it was found, or else will be nil
+                                for i in (0..<routeCoOrds.count) {
+                                    if routeCoOrds[i] == CoOrds {
+                                        found = i
+                                    }
+                                }
+                                return found
+                            }
+                            let capitalized = answersOneString.capitalized
+                            let wordLetter = capitalized[capitalized.characters.index(capitalized.startIndex, offsetBy: numberInRouteCoOrds((word[j].0, word[j].1)))]
+                            let squareLetter = capitalized[capitalized.characters.index(capitalized.startIndex, offsetBy: numberInRouteCoOrds(answerWord[j]))]
+                            
+                            if wordLetter == squareLetter {
+                                boolArray.append(true)
+                            } else {
+                                boolArray.append(false)
+                            }
+                        } else {
+                            if answerWord[j].0 == word[j].0 && answerWord[j].1 == word[j].1 {
+                                boolArray.append(true)
+                            } else {
+                                boolArray.append(false)
+                            }
+                        }
+                    }
+                    
+                    if boolArray.contains(false) {
+                        
+                    } else {
+                        if autoCorrectWord {
+                            var newAnswerWord:[(Int,Int,BorderType)] = word
+                            var lettersBeingDeleted:[(Int,Int,BorderType)] = []
+                            for j in 0..<answerWord.count {
+                                if answerWord[j].0 != word[j].0 || answerWord[j].1 != word[j].1 {
+                                    lettersBeingDeleted.append((word[j].0, word[j].1, word[j].2))
+                                    newAnswerWord[j] = (answerWord[j].0, answerWord[j].1, word[j].2)
+                                }
+                            }
+                            
+                            selectedWords.removeLast()
+                            selectedWords.append(newAnswerWord)
+                            if lettersBeingDeleted.count == 0 {
+                                return(true, i, nil, newAnswerWord)
+                            }
+                            return(true, i, lettersBeingDeleted, newAnswerWord)
+                            
+                        }
+                        return(true, i ,nil, nil)
+                    }
+                }
+            }
+        }
+        return(false, nil, nil, nil)
+    }
+    
+    func isWholeThingTrue() -> Bool {
+        for i in 0..<wordsFound.count {
+            if wordsFound[i] == false {
+                return false
+            }
+        }
+        return true
+    }
 
-func routeArrayOfRows(_ array: [(Int,Int)], numberOfRows: Int , numberOfCols: Int) -> [[Int]] {
+    
+    func makeBorders(_ squareView: LetterSquareView, borderType: BorderType){
+        squareView.makeViewsFor(borderType, color: color)
+    }
+    
+    func makeBordersOfLast(_ squares:Int){
+       func makeBordersForSquare(_ square:(Int,Int, BorderType)){
+            let i = square.0
+            let j = square.1
+            let borderType = square.2
+            let squareView = arrayOfRows[i][j]
+
+            makeBorders(squareView, borderType: borderType)
+        }
+        
+        let letterCount = selectedWords[currentWord!].count
+
+        if currentWord! >= 0 && letterCount - squares >= 0 && letterCount > 0 {
+            for i in 0..<squares {
+                makeBordersForSquare(selectedWords[currentWord!][letterCount - 1 - i])
+            }
+        }
+
+    }
+    
+    
+    
+    
+    func endOfSelection(_ square:(Int,Int, BorderType)){
+        putBorderOnPreviousSquare(square)
+        putEndBorderOnCurrentSquare(square)
+        makeBordersOfLast(2)
+
+        
+        let wordCorrect = isWordCorrect(whatWordIsSquareIn(square)!.0)
+        if autoCorrectWord {
+            if wordCorrect.2 != nil {
+                var lettersBeingDeleted = wordCorrect.2!
+                let count = lettersBeingDeleted.count
+                putEndBorderOnCurrentSquare(selectedWords.last!.last!)
+                for i in 0..<count {
+                    let square = lettersBeingDeleted[i]
+                    let i = square.0
+                    let j = square.1
+                    let squareView = arrayOfRows[i][j]
+                    makeBorders(squareView, borderType: BorderType.none)
+                }
+                let lettersCount = selectedWords[currentWord!].count
+                if count > 0 {
+                    for i in 0..<lettersCount {
+                        putBorderOnPreviousSquare(selectedWords[currentWord!][lettersCount - i - 1])
+                    }
+                }
+                makeBordersOfLast(lettersCount - 1)
+            }
+        }
+
+
+        if spellOutNameAtBottom {
+            changeTranslatedText()
+        }
+        
+
+        if wordCorrect.0 {
+            isWordBeingSelectedCorrect = true
+
+            let wordNumber = wordCorrect.1!
+            
+            wordsFound[wordNumber] = true
+
+            let dataWord = answersArray[wordNumber]
+
+            if needsTranslation {
+                self.translationText.text = "\(findTranslation(self.currentWord!).capitalized) = \(dataWord.capitalized)"
+            } else {
+                if sayIfCorrect {
+                    self.translationText.text = "\(dataWord.capitalized) IS CORRECT!"
+                }
+            }
+
+            if isWholeThingTrue() {
+                translationText.text = "Whole thing true"
+            }
+        }
+    }
+    // don't need word number maybe
+    func findTranslation(_ wordNumber:Int) -> String{
+        return Data().makeArrayOfAnswers(Data().toDataString(dataBeforeTranslation[0] as! String, dataUsed: false))[currentWord!]
+    }
+    
+    func changeTranslatedText(){
+        
+        if isWordCorrect(currentWord!).0 == false {
+            let squares = selectedWords[currentWord!]
+            for i in 0..<squares.count {
+                stringWord = stringWord + String(answersOneString[answersOneString.characters.index(answersOneString.startIndex, offsetBy: route[squares[i].0][squares[i].1])])
+            }
+            var translation:String
+            if giveTranslation && needsTranslation{
+                translation = "\(findTranslation(currentWord!)) = "
+            } else {
+                translation = ""
+            }
+            translationText.text = "\(translation)\(stringWord.capitalized)"
+            
+        }
+        stringWord = ""
+    }
+    
+    func selectSquare(_ square:(Int,Int, BorderType), startOfTouch: Bool){
+        if startOfTouch {
+            if selectedWords.count == 0 {
+                selectedWords = [[square]]
+            } else  {
+                selectedWords.append([square])
+            }
+            currentWord = selectedWords.count - 1
+        } else {
+            selectedWords[currentWord!].append(square)
+        }
+
+        endOfSelection(square)
+    }
+    
+    func putBorderOnPreviousSquare(_ square:(Int,Int, BorderType)){
+        
+        if selectedWords[currentWord!].count == 2 {
+            //all four are mistakes that work because it's the first one, not sure why
+            
+            func setBorder(_ borderType:BorderType){
+                selectedWords[currentWord!][0].2 = borderType
+            }
+            
+            switch whereIsSquare(square){
+            case SquarePosition.aboveMiddle: setBorder(BorderType.endFromBottom)
+            case SquarePosition.belowMiddle: setBorder(BorderType.endFromTop)
+            case SquarePosition.middleLeft: setBorder(BorderType.endFromRight)
+            case SquarePosition.middleRight: setBorder(BorderType.endFromLeft)
+            default: break
+            }
+            
+        } else {
+            let previousSquareWord = whatIsPreviousSquareWL(square)?.0
+            let previousSquareLetter = whatIsPreviousSquareWL(square)?.1
+            
+            func changeBorderTypeTo(_ borderType: BorderType) {
+                selectedWords[previousSquareWord!][previousSquareLetter!].2 = borderType
+            }
+            
+            let word = whatWordIsSquareIn(square)!.0
+            let letter = whatWordIsSquareIn(square)!.1
+            if letter > 0 {
+                let previousSquare = selectedWords[word][letter - 1]
+                let oneBehind = whereIsSquare(square)
+                let twoBehind = whereIsSquare(previousSquare)
+                if (oneBehind == SquarePosition.aboveMiddle && twoBehind == SquarePosition.aboveMiddle) || (oneBehind == SquarePosition.belowMiddle && twoBehind == SquarePosition.belowMiddle) {
+                    changeBorderTypeTo(BorderType.tubeVertical)
+                } else if (oneBehind == SquarePosition.middleLeft && twoBehind == SquarePosition.aboveMiddle) || (oneBehind == SquarePosition.belowMiddle && twoBehind == SquarePosition.middleRight) {
+                    changeBorderTypeTo(BorderType.cornerTopToRight)
+                } else if (oneBehind == SquarePosition.middleRight && twoBehind == SquarePosition.aboveMiddle) || (oneBehind == SquarePosition.belowMiddle && twoBehind == SquarePosition.middleLeft) {
+                    changeBorderTypeTo(BorderType.cornerTopToLeft)
+                } else if (oneBehind == SquarePosition.middleLeft && twoBehind == SquarePosition.middleLeft) || (oneBehind == SquarePosition.middleRight && twoBehind == SquarePosition.middleRight) {
+                    changeBorderTypeTo(BorderType.tubeHorizontal)
+                } else if (oneBehind == SquarePosition.middleRight && twoBehind == SquarePosition.belowMiddle) || (oneBehind == SquarePosition.aboveMiddle && twoBehind == SquarePosition.middleLeft) {
+                    changeBorderTypeTo(BorderType.cornerBottomToLeft)
+                } else if (oneBehind == SquarePosition.middleLeft && twoBehind == SquarePosition.belowMiddle) || (oneBehind == SquarePosition.aboveMiddle && twoBehind == SquarePosition.middleRight) {
+                    changeBorderTypeTo(BorderType.cornerBottomToRight)
+                }
+            }
+        }
+    }
+    
+    
+    func putEndBorderOnCurrentSquare(_ square:(Int,Int, BorderType)){
+        let oneBehind = whereIsSquare(square)
+        let (word,letter) = whatWordIsSquareIn(square)!
+        
+        func changeBorderTypeTo(_ borderType: BorderType) {
+            selectedWords[word][letter].2 = borderType
+        }
+        
+        switch oneBehind {
+        case SquarePosition.aboveMiddle: changeBorderTypeTo(BorderType.endFromTop)
+        case SquarePosition.belowMiddle: changeBorderTypeTo(BorderType.endFromBottom)
+        case SquarePosition.middleLeft: changeBorderTypeTo(BorderType.endFromLeft)
+        case SquarePosition.middleRight: changeBorderTypeTo(BorderType.endFromRight)
+        default: break
+        }
+    }
+    
+    func whatIsPreviousSquareIJ(_ square:(Int,Int, BorderType)) -> (Int,Int)? {
+        let word = whatWordIsSquareIn(square)!.0
+        let letter = whatWordIsSquareIn(square)!.1
+        if letter > 0 {
+            return (selectedWords[word][letter - 1].0, selectedWords[word][letter - 1].1)
+        }
+        return nil
+    }
+    
+    func whatIsPreviousSquareWL(_ square:(Int,Int, BorderType)) -> (Int,Int)? {
+        let word = whatWordIsSquareIn(square)!.0
+        let letter = whatWordIsSquareIn(square)!.1
+        
+        if letter > 0 {
+            return (word, letter - 1)
+        }
+        return nil
+    }
+    
+    
+    //where is square in relation to square before it
+    func whereIsSquare(_ square:(Int,Int, BorderType)) -> SquarePosition {
+        
+        if let previousSquareI = whatIsPreviousSquareIJ(square)?.0 {
+            if let previousSquareJ = whatIsPreviousSquareIJ(square)?.1 {
+                
+                let iDifference = previousSquareI - square.0
+                let jDifference = previousSquareJ - square.1
+                
+                if iDifference == 1 && jDifference == 1 {
+                    return SquarePosition.belowRight
+                } else if iDifference == 0 && jDifference == 1 {
+                    return SquarePosition.belowMiddle
+                } else if iDifference == -1 && jDifference == 1 {
+                    return SquarePosition.belowLeft
+                } else if iDifference == 1 && jDifference == 0 {
+                    return SquarePosition.middleRight
+                } else if iDifference == 0 && jDifference == 0 {
+                    return SquarePosition.error
+                } else if iDifference == -1 && jDifference == 0 {
+                    return SquarePosition.middleLeft
+                } else if iDifference == 1 && jDifference == -1 {
+                    return SquarePosition.aboveRight
+                } else if iDifference == 0 && jDifference == -1 {
+                    return SquarePosition.aboveMiddle
+                } else if iDifference == -1 && jDifference == -1 {
+                    return SquarePosition.aboveLeft
+                }
+            }
+        }
+        return SquarePosition.error
+        
+    }
+    
+    func whatWordIsSquareIn(_ square:(Int,Int, BorderType)) -> (Int,Int)? {
+        for i in 0..<selectedWords.count {
+            for j in 0..<selectedWords[i].count {
+                if square.0 == selectedWords[i][j].0 && square.1 == selectedWords[i][j].1 {
+                    return (i,j)
+                }
+            }
+        }
+        return nil
+    }
+    
+    
+    func routeArrayOfRows(_ array: [(Int,Int)], numberOfRows: Int , numberOfCols: Int) -> [[Int]] {
         var arrayOfRows = [[Int]](repeating: [Int](repeating: 0, count: numberOfCols), count: numberOfRows)
         for m in 0...array.count-1 {
             let i = array[m].0
@@ -837,7 +841,22 @@ func routeArrayOfRows(_ array: [(Int,Int)], numberOfRows: Int , numberOfCols: In
         }
         return arrayOfRows
     }
+}
 
+
+
+enum SquarePosition {
+    case aboveLeft
+    case aboveMiddle
+    case aboveRight
+    case middleLeft
+    case middleRight
+    case belowLeft
+    case belowMiddle
+    case belowRight
+    
+    case error
+}
 
 
 enum BorderType {

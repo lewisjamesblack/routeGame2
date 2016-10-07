@@ -62,7 +62,7 @@ class LetterSquareView: UIView {
         selectingView.backgroundColor = color
     }
     
-    func makeViewsFor(_ borderType: BorderType, color: UIColor, hint: Bool) {
+    func makeViewsFor(_ borderType: BorderType, color: UIColor) {
         let subViews = letterSquareViewView.subviews
         for subview in subViews{
             if (subview is UILabel) {
@@ -140,13 +140,9 @@ class LetterSquareView: UIView {
         }
         
         selectingView.translatesAutoresizingMaskIntoConstraints = false
-        if hint {
-            selectingView.layer.borderColor = UIColor.black.cgColor
-            selectingView.layer.borderWidth = 1.0
-        } else {
-            selectingView.layer.borderWidth = 0
-            selectingView.backgroundColor = color
-        }
+        
+        selectingView.layer.borderWidth = 0
+        selectingView.backgroundColor = color
         selectingView.layer.cornerRadius = squareViewSelectionCornerRadius
         selectingView.clipsToBounds = true
         letterSquareViewView.addSubview(selectingView)
