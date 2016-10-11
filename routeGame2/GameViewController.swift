@@ -8,8 +8,6 @@
 
 import UIKit
 
-
-
 class GameViewController: UIViewController {
 
     @IBOutlet weak var translationText: UILabel!
@@ -25,12 +23,25 @@ class GameViewController: UIViewController {
     var arrayOfRows = [[LetterSquareView]]()
     var wordsFound: Array<Bool> = []
     var currentSquare:(Int,Int, BorderType)?
-    var currentWord:Int?
     var selectedWords:Array<Array<(Int,Int, BorderType)>> = []
     var isWordBeingSelectedCorrect:Bool = false
     var coordsOfAnswersArray = [[(Int,Int)]]()
     var hintsAskedForSoFar:Int = 0
     var characterGridView:CharacterGridView?
+    var needsTranslation:Bool = false
+    var answersArray: Array<String> = []
+    var routeCoOrds: [(Int, Int)] = []
+    var answersOneString: String = ""
+    var route: [[Int]] = []
+    var stringWord:String = "" //could be problem
+    var dataBeforeTranslation: [AnyObject] = []
+    var minWordLength: Int = 0
+    var maxWordLength: Int = 0
+    var startPoint:CGPoint?
+    var numberOfCols: Int = 0
+    var numberOfRows: Int = 0
+    var currentlySelectingSquare: Bool = false
+    var currentWord:Int?
     
     //Options
     
@@ -44,29 +55,21 @@ class GameViewController: UIViewController {
     //Hints
     var showNextLetterButton:Bool = true
     //Other
-    var deletingWords:Bool = true //kinda pointless if things are being corrected
+    var deletingWords:Bool = false //potentially fucks things up if true & things are being corrected
     var ifWordIncorrectUnselect:Bool = true
     var stopSelectingIfWordCorrect:Bool = true
     var autoCorrectWord:Bool = true
     var onlySelectSurroundingLetters:Bool = true //basically only select the letters above/below/sides of last letter
     
-    var needsTranslation:Bool = false
-    var answersArray: Array<String> = []
-    var routeCoOrds: [(Int, Int)] = []
-    var answersOneString: String = ""
-    var route: [[Int]] = []
-    var stringWord:String = "" //could be problem
-    var dataBeforeTranslation: [AnyObject] = []
-    var minWordLength: Int = 0
- 
+   
     
     override func viewDidLoad() {
         
         super.viewDidLoad()
         //Calculate Constants
 
-        let numberOfCols = game.numberOfCols
-        let numberOfRows = game.numberOfRows
+        numberOfCols = game.numberOfCols
+        numberOfRows = game.numberOfRows
         routeCoOrds = game.routeCoOrds
         let minWordLengthIfNoSmaller = game.minWordLengthIfNoSmaller
         let maxWordLengthIfNoBigger = game.maxWordLengthIfNoBigger
@@ -108,7 +111,7 @@ class GameViewController: UIViewController {
         }
         
         minWordLength = minWordLengthFunc()
-        let maxWordLength = maxWordLengthFunc()
+        maxWordLength = maxWordLengthFunc()
         
         var wordStart = 0
         answersOneString = answersArray.joined(separator: "")
@@ -123,7 +126,6 @@ class GameViewController: UIViewController {
         }
         
         //Make Grid
-
         
         characterGridView = CharacterGridView(frame: CGRect(x: 0, y: 0, width: width, height: height), numberOfCols: numberOfCols, numberOfRows: numberOfRows, route: route, answersOneString: answersOneString)
         scrollView.addSubview(characterGridView!)
@@ -146,276 +148,21 @@ class GameViewController: UIViewController {
             scrollButton.isHidden = true
         }
         
-        //Detect Touches
-      
-        var startPoint:CGPoint?
-
-        func onSquareTouched(_ touches:Set<UITouch>, startOfTouch:Bool) {
-            var square = pointIsInSquare(touches)
-            if square != nil && isTouchNewSquare(touches, square: square!) {
-                switch whatIsSquare(square!, startOfTouch: startOfTouch).0 {
-                case Square.selectedInPreviousWord: square!.2 = whatIsSquare(square!, startOfTouch: startOfTouch).1
-                    if startOfTouch && deletingWords {
-                        deleteWordQuestion(square!)
-                    }
-                case Square.selectedInCurrentWord: square!.2 = whatIsSquare(square!, startOfTouch: startOfTouch).1
-                    if stopSelectingIfWordCorrect {
-                        if isWordBeingSelectedCorrect != true {
-                            unselectUpToSquare(square!)
-                        }
-                    } else {
-                        unselectUpToSquare(square!)
-                    }
-                case Square.unSelectedAllowed: square!.2 = whatIsSquare(square!, startOfTouch: startOfTouch).1
-                    selectSquare(square!, startOfTouch:startOfTouch)
-                case Square.unSelectedNotAllowed:square!.2 = whatIsSquare(square!, startOfTouch: startOfTouch).1
-                }
-            }
-        }
-        
-        
-        
-        
-        
-
-        //Establish where touch is
-        
-        func pointIsInSquare(_ touches:Set<UITouch>) -> (Int,Int,BorderType)?{
-            if let touch = touches.first {
-                startPoint = touch.location(in: characterGridView)
-                var m:Int = 0
-                var n:Int = 0
-                for i in 0...numberOfCols - 1 {
-                    let beforeWidth:CGFloat = (firstLetterDistanceFromSide + CGFloat(i) * letterSquareViewWidth)
-                    let afterWidth:CGFloat = (firstLetterDistanceFromSide + (CGFloat(i) + 1) * letterSquareViewWidth)
-                    if beforeWidth < startPoint!.x && startPoint!.x <= afterWidth {
-                        m = i
-                    }
-                }
-                for j in 0...numberOfRows - 1 {
-                    let beforeHeight:CGFloat = (firstLetterDistanceFromTop + CGFloat(j) * letterSquareViewHeight)
-                    let afterHeight:CGFloat = (firstLetterDistanceFromTop + (CGFloat(j) + 1) * letterSquareViewHeight)
-                    if beforeHeight < startPoint!.y && startPoint!.y <= afterHeight {
-                        n = j
-                    }
-                }
-                return (m,n,BorderType.unknown)
-            }
-            return nil
-        }
-
-        func isTouchNewSquare(_ touches:Set<UITouch>, square:(Int,Int, BorderType)) -> Bool {
-            if currentSquare != nil {
-                if square == currentSquare! {
-                    return false
-                }
-                currentSquare = square
-                return true
-            }
-            currentSquare = square
-            return true
-        }
-        
-        
-        
-        
-
-        //Establish what square is
-        
-        enum Square {
-            case selectedInPreviousWord
-            case selectedInCurrentWord
-            case unSelectedAllowed
-            case unSelectedNotAllowed
-        }
-        
-        func whatIsSquare(_ square:(Int,Int, BorderType), startOfTouch: Bool) -> (Square,BorderType) {
-            if isSquareSelected(square).0 {
-                if isSelectedSquareInCurrentWord(square, startOfTouch: startOfTouch) {
-                    return (Square.selectedInCurrentWord, isSquareSelected(square).1)
-                }
-                return (Square.selectedInPreviousWord, isSquareSelected(square).1)
-            } else {
-                if isUnSelectedSquareAllowed(square, startOfTouch: startOfTouch) {
-                    return (Square.unSelectedAllowed, BorderType.unknown)
-                }
-                return (Square.unSelectedNotAllowed, BorderType.unknown)
-            }
-        }
-        
-        func isSquareSelected(_ square:(Int,Int, BorderType)) -> (Bool, BorderType) {
-            if selectedWords.count != 0 {
-                for i in 0..<selectedWords.count {
-                    for j in 0..<selectedWords[i].count {
-                        if square.0 == selectedWords[i][j].0 && square.1 == selectedWords[i][j].1 {
-                            return (true, selectedWords[i][j].2)
-                        }
-                    }
-                }
-            }
-            return (false, BorderType.none)
-        }
-        
-        
-        func isSelectedSquareInCurrentWord(_ square:(Int,Int, BorderType), startOfTouch: Bool) -> Bool {
-            
-            if let m = whatWordIsSquareIn(square) {
-                let word = m.0
-                if word == currentWord {
-                    return true
-                }
-                return false
-            }
-            return false
-        }
-        
-       
-        func isUnSelectedSquareAllowed(_ square:(Int,Int, BorderType), startOfTouch: Bool) -> Bool {
-            let newI = square.0
-            let newJ = square.1
-
-    
-            if currentWord == nil && onlySelectSurroundingLetters {
-                let count = selectedWords.count
-                if count == 0 {
-                    if newI == 0 && newJ == 0 {
-                        return true
-                    }
-                    return false
-                } else {
-                    let highLightedWord = selectedWords[count - 1]
-                    let lastSquareHighlighted = highLightedWord[highLightedWord.count - 1]
-                    let oldI = lastSquareHighlighted.0
-                    let oldJ = lastSquareHighlighted.1
-                    
-                    if ((newI == oldI + 1 || newI == oldI - 1)  && newJ == oldJ) || ((newJ == oldJ + 1 || newJ == oldJ - 1)  && newI == oldI) {
-                        return true
-                    }
-                    return false
-                }
-            } else if currentWord != nil {
-                
-                if selectedWords.count != 0 {
-                    let highLightedWord = selectedWords[currentWord!]
-                    if highLightedWord.count > maxWordLength - 1 {
-                        return false
-                    }
-                    if stopSelectingIfWordCorrect {
-                        if isWordBeingSelectedCorrect{
-                             return false
-                        }
-                    }
-                    let lastSquareHighlighted = highLightedWord[highLightedWord.count - 1]
-                    let oldI = lastSquareHighlighted.0
-                    let oldJ = lastSquareHighlighted.1
-                    
-                    
-                    if  newI > (oldI + 1) || newI < (oldI - 1) || newJ > (oldJ + 1) || newJ < (oldJ - 1) || newI == (oldI + 1) &&  newJ == (oldJ + 1) || newI == (oldI + 1) && newJ == (oldJ - 1) || newI == (oldI - 1) &&  newJ == (oldJ + 1) || newI == (oldI - 1) && newJ == (oldJ - 1) {
-                        return false
-                    }
-                }
-                return true
-            }
-            return true
-        }
-        
-        //Do stuff with square
-        //Select
-       
-        
-        
-        //Delete
-        
-        func deleteWordQuestion(_ square:(Int,Int, BorderType)) {
-            if let j = whatWordIsSquareIn(square) {
-                let m = j.0
-                deleteWordAlert("Do you want to delete this word?", msg: "Press Ok to delete", word: m)
-                
-            }
-        }
-
-        func deleteWordAlert(_ title: String, msg: String, word:Int) {
-            let alert = UIAlertController(title: title, message: msg, preferredStyle: .alert)
-            let action = UIAlertAction(title: "Ok", style: .default, handler: {(alert: UIAlertAction!) in
-                self.deSelectWord(word)
-            })
-            alert.addAction(action)
-            
-            alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: {
-                (alertAction: UIAlertAction!) in
-                alert.dismiss(animated: true, completion: nil)
-                colourChangeIfDeletionCancelled(word)
-            }))
-            
-            colourChangeBeforeDeletion(word)
-            self.present(alert, animated: true, completion: nil)
-        }
-        
-        func colourChangeBeforeDeletion(_ word:Int){
-            for i in 0..<selectedWords[word].count {
-                let square = selectedWords[word][i]
-                let squareView = arrayOfRows[square.0][square.1]
-                squareView.lastColor = squareView.selectingView.backgroundColor
-                squareView.selectingView.backgroundColor = deleteColourChangeLetterLabelColor
-            }
-        }
-        
-        func colourChangeIfDeletionCancelled(_ word:Int){
-            for i in 0..<selectedWords[word].count {
-                let square = selectedWords[word][i]
-                let squareView = arrayOfRows[square.0][square.1]
-                squareView.selectingView.backgroundColor = squareView.lastColor
-            }
-        }
-
-        //Deselect
-        
-        
-        func unselectUpToSquare(_ square:(Int,Int, BorderType)){
-            
-            let word = whatWordIsSquareIn(square)!.0
-            let letter = whatWordIsSquareIn(square)!.1
-            let mostRecentLetter = selectedWords[currentWord!].count - 1
-            
-            if selectedWords[word].count != 1 {
-                if word == currentWord! && letter != mostRecentLetter {
-                    let letterBeingUnSelected = letter + 1
-                    let squaresBeingDeleted = selectedWords[word][letterBeingUnSelected...mostRecentLetter]
-                    
-                    if squaresBeingDeleted.count == 1 {
-                        unHighlightSquare(selectedWords[word][letterBeingUnSelected])
-                        selectedWords[word].removeLast()
-                    } else {
-                        for i in 0..<selectedWords[word].count {
-                            for j in letterBeingUnSelected...letterBeingUnSelected + squaresBeingDeleted.count - 1 {
-                                if selectedWords[word][i].0 == squaresBeingDeleted[j].0 && selectedWords[word][i].1 == squaresBeingDeleted[j].1 {
-                                    unHighlightSquare(selectedWords[word][i])
-                                }
-                            }
-                        }
-                        for _ in 0..<squaresBeingDeleted.count {
-                            selectedWords[word].removeLast()//rewrite this
-                        }
-                    }
-                }
-            }
-            endOfSelection(square)
-        }
-        
-
         translationText.text = ""
+
+        //Detect Touches
 
         NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: TOUCH_BEGAN), object: nil, queue: nil, using: {( notification ) -> Void in
             if let touches: Set<UITouch> = notification.object as! Set<UITouch>? {
                 self.scrollView.isScrollEnabled = false
-                onSquareTouched(touches, startOfTouch:true)
+                self.onSquareTouched(touches, startOfTouch:true)
             }
         })
         
         NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: TOUCH_MOVED), object: nil, queue: nil, using: {( notification ) -> Void in
             if let touches: Set<UITouch> = notification.object as! Set<UITouch>? {
                 self.scrollView.isScrollEnabled = false
-                onSquareTouched(touches, startOfTouch:false)
+                self.onSquareTouched(touches, startOfTouch:false)
             }
         })
         
@@ -423,48 +170,278 @@ class GameViewController: UIViewController {
             self.scrollView.isScrollEnabled = true
             self.wordSelectionOver()
         })
+
+        NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: "NotificationIdentifier"), object: nil, queue: nil, using: {( notification ) -> Void in
+//            print("currentWord = \(self.currentWord)")
+//            print("selectedWords = \(self.selectedWords)")
+
+            self.deSelectWord(self.currentWord!)
+            self.scrollView.isScrollEnabled = true
+
+            self.currentlySelectingSquare = false
+            self.hintsAskedForSoFar = 0
+            self.currentSquare = nil
+            self.currentWord = nil
+            self.translationText.text = ""
+
+        })
+        
+//        _ = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(GameViewController.printVariable), userInfo: nil, repeats: true)
+//        
+//       
+        
     }
     
-    @IBAction func onButtonPressed(_ sender: AnyObject) {
-        if scrollView.panGestureRecognizer.minimumNumberOfTouches == 1 {
-            scrollButton.setTitle("Choose", for: UIControlState())
-            scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
-        } else if scrollView.panGestureRecognizer.minimumNumberOfTouches == 2 {
-            scrollButton.setTitle("Scroll", for: UIControlState())
-            scrollView.panGestureRecognizer.minimumNumberOfTouches = 1
-        }
-    }
     
-    @IBAction func nextLetterButtonPressed(_ sender: AnyObject) {
-        var nextWordArray: Array<(Int,Int)> = []
-        
-        
-        if let currentWord = currentWord {
-            print("currentWord = \(currentWord)")
-            nextWordArray = coordsOfAnswersArray[currentWord]
-        } else {
-            nextWordArray = coordsOfAnswersArray[selectedWords.count]
-        }
-        print("nextWord = \(nextWordArray)")
-        print("selectedWords =\(selectedWords)")
-        let hintWordCount = nextWordArray.count
-        
-        if hintsAskedForSoFar == hintWordCount {
-            wordSelectionOver()
-            hintsAskedForSoFar = 0
-        } else {
-            let word = nextWordArray[hintsAskedForSoFar]
-            let square = (word.0, word.1, BorderType.unknown)
-            print("square = \(square)")
-            
-            if hintsAskedForSoFar == 0 {
-                selectSquare(square, startOfTouch: true)
-            } else if hintsAskedForSoFar < hintWordCount {
-                selectSquare(square, startOfTouch: false)
+//    func printVariable() {
+//        print(currentlySelectingSquare)
+//    }
+    
+
+    
+    
+    func onSquareTouched(_ touches:Set<UITouch>, startOfTouch:Bool) {
+        var square = pointIsInSquare(touches)
+        if square != nil && isTouchNewSquare(touches, square: square!) {
+            switch whatIsSquare(square!).0 {
+            case Square.selectedInPreviousWord: square!.2 = whatIsSquare(square!).1
+            if startOfTouch && deletingWords {
+                deleteWordQuestion(square!)
+                }
+            case Square.selectedInCurrentWord: square!.2 = whatIsSquare(square!).1
+            if stopSelectingIfWordCorrect {
+                if isWordBeingSelectedCorrect != true {
+                    unselectUpToSquare(square!)
+                }
+            } else {
+                unselectUpToSquare(square!)
+                }
+            case Square.unSelectedAllowed: square!.2 = whatIsSquare(square!).1
+            currentlySelectingSquare = true
+            selectSquare(square!, startOfTouch:startOfTouch)
+            case Square.unSelectedNotAllowed:square!.2 = whatIsSquare(square!).1
             }
-            hintsAskedForSoFar += 1
         }
     }
+    
+    //Establish where touch is
+    
+    func pointIsInSquare(_ touches:Set<UITouch>) -> (Int,Int,BorderType)?{
+        if let touch = touches.first {
+            startPoint = touch.location(in: characterGridView)
+            var m:Int = 0
+            var n:Int = 0
+            for i in 0...numberOfCols - 1 {
+                let beforeWidth:CGFloat = (firstLetterDistanceFromSide + CGFloat(i) * letterSquareViewWidth)
+                let afterWidth:CGFloat = (firstLetterDistanceFromSide + (CGFloat(i) + 1) * letterSquareViewWidth)
+                if beforeWidth < startPoint!.x && startPoint!.x <= afterWidth {
+                    m = i
+                }
+            }
+            for j in 0...numberOfRows - 1 {
+                let beforeHeight:CGFloat = (firstLetterDistanceFromTop + CGFloat(j) * letterSquareViewHeight)
+                let afterHeight:CGFloat = (firstLetterDistanceFromTop + (CGFloat(j) + 1) * letterSquareViewHeight)
+                if beforeHeight < startPoint!.y && startPoint!.y <= afterHeight {
+                    n = j
+                }
+            }
+            return (m,n,BorderType.unknown)
+        }
+        return nil
+    }
+    
+    func isTouchNewSquare(_ touches:Set<UITouch>, square:(Int,Int, BorderType)) -> Bool {
+        if currentSquare != nil {
+            if square == currentSquare! {
+                return false
+            }
+            currentSquare = square
+            return true
+        }
+        currentSquare = square
+        return true
+    }
+    
+    
+    
+    
+    
+    //Establish what square is
+    
+    enum Square {
+        case selectedInPreviousWord
+        case selectedInCurrentWord
+        case unSelectedAllowed
+        case unSelectedNotAllowed
+    }
+    
+    func whatIsSquare(_ square:(Int,Int, BorderType)) -> (Square,BorderType) {
+        if isSquareSelected(square).0 {
+            if isSelectedSquareInCurrentWord(square) {
+                return (Square.selectedInCurrentWord, isSquareSelected(square).1)
+            }
+            return (Square.selectedInPreviousWord, isSquareSelected(square).1)
+        } else {
+            if isUnSelectedSquareAllowed(square) {
+                return (Square.unSelectedAllowed, BorderType.unknown)
+            }
+            return (Square.unSelectedNotAllowed, BorderType.unknown)
+        }
+    }
+    
+    func isSquareSelected(_ square:(Int,Int, BorderType)) -> (Bool, BorderType) {
+        if selectedWords.count != 0 {
+            for i in 0..<selectedWords.count {
+                for j in 0..<selectedWords[i].count {
+                    if square.0 == selectedWords[i][j].0 && square.1 == selectedWords[i][j].1 {
+                        return (true, selectedWords[i][j].2)
+                    }
+                }
+            }
+        }
+        return (false, BorderType.none)
+    }
+    
+    
+    func isSelectedSquareInCurrentWord(_ square:(Int,Int, BorderType)) -> Bool {
+        
+        if let m = whatWordIsSquareIn(square) {
+            let word = m.0
+            if word == currentWord {
+                return true
+            }
+            return false
+        }
+        return false
+    }
+    
+    
+    func isUnSelectedSquareAllowed(_ square:(Int,Int, BorderType)) -> Bool {
+        let newI = square.0
+        let newJ = square.1
+        
+        
+        if currentWord == nil && onlySelectSurroundingLetters {
+            let count = selectedWords.count
+            if count == 0 {
+                if newI == 0 && newJ == 0 {
+                    return true
+                }
+                return false
+            } else {
+                let highLightedWord = selectedWords[count - 1]
+                let lastSquareHighlighted = highLightedWord[highLightedWord.count - 1]
+                let oldI = lastSquareHighlighted.0
+                let oldJ = lastSquareHighlighted.1
+                
+                if ((newI == oldI + 1 || newI == oldI - 1)  && newJ == oldJ) || ((newJ == oldJ + 1 || newJ == oldJ - 1)  && newI == oldI) {
+                    return true
+                }
+                return false
+            }
+        } else if currentWord != nil {
+            
+            if selectedWords.count != 0 {
+                let highLightedWord = selectedWords[currentWord!]
+                if highLightedWord.count > maxWordLength - 1 {
+                    return false
+                }
+                if stopSelectingIfWordCorrect {
+                    if isWordBeingSelectedCorrect{
+                        return false
+                    }
+                }
+                let lastSquareHighlighted = highLightedWord[highLightedWord.count - 1]
+                let oldI = lastSquareHighlighted.0
+                let oldJ = lastSquareHighlighted.1
+                
+                
+                if  newI > (oldI + 1) || newI < (oldI - 1) || newJ > (oldJ + 1) || newJ < (oldJ - 1) || newI == (oldI + 1) &&  newJ == (oldJ + 1) || newI == (oldI + 1) && newJ == (oldJ - 1) || newI == (oldI - 1) &&  newJ == (oldJ + 1) || newI == (oldI - 1) && newJ == (oldJ - 1) {
+                    return false
+                }
+            }
+            return true
+        }
+        return true
+    }
+    
+    //Delete
+    
+    func deleteWordQuestion(_ square:(Int,Int, BorderType)) {
+        if let j = whatWordIsSquareIn(square) {
+            let m = j.0
+            deleteWordAlert("Do you want to delete this word?", msg: "Press Ok to delete", word: m)
+        }
+    }
+    
+    func deleteWordAlert(_ title: String, msg: String, word:Int) {
+        let alert = UIAlertController(title: title, message: msg, preferredStyle: .alert)
+        let action = UIAlertAction(title: "Ok", style: .default, handler: {(alert: UIAlertAction!) in
+            self.deSelectWord(word)
+        })
+        alert.addAction(action)
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: {
+            (alertAction: UIAlertAction!) in
+            alert.dismiss(animated: true, completion: nil)
+            self.colourChangeIfDeletionCancelled(word)
+        }))
+        
+        colourChangeBeforeDeletion(word)
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func colourChangeBeforeDeletion(_ word:Int){
+        for i in 0..<selectedWords[word].count {
+            let square = selectedWords[word][i]
+            let squareView = arrayOfRows[square.0][square.1]
+            squareView.lastColor = squareView.selectingView.backgroundColor
+            squareView.selectingView.backgroundColor = deleteColourChangeLetterLabelColor
+        }
+    }
+    
+    func colourChangeIfDeletionCancelled(_ word:Int){
+        for i in 0..<selectedWords[word].count {
+            let square = selectedWords[word][i]
+            let squareView = arrayOfRows[square.0][square.1]
+            squareView.selectingView.backgroundColor = squareView.lastColor
+        }
+    }
+    
+    //Deselect
+    
+    
+    func unselectUpToSquare(_ square:(Int,Int, BorderType)){
+        
+        let word = whatWordIsSquareIn(square)!.0
+        let letter = whatWordIsSquareIn(square)!.1
+        let mostRecentLetter = selectedWords[currentWord!].count - 1
+        
+        if selectedWords[word].count != 1 {
+            if word == currentWord! && letter != mostRecentLetter {
+                let letterBeingUnSelected = letter + 1
+                let squaresBeingDeleted = selectedWords[word][letterBeingUnSelected...mostRecentLetter]
+                
+                if squaresBeingDeleted.count == 1 {
+                    unHighlightSquare(selectedWords[word][letterBeingUnSelected])
+                    selectedWords[word].removeLast()
+                } else {
+                    for i in 0..<selectedWords[word].count {
+                        for j in letterBeingUnSelected...letterBeingUnSelected + squaresBeingDeleted.count - 1 {
+                            if selectedWords[word][i].0 == squaresBeingDeleted[j].0 && selectedWords[word][i].1 == squaresBeingDeleted[j].1 {
+                                unHighlightSquare(selectedWords[word][i])
+                            }
+                        }
+                    }
+                    for _ in 0..<squaresBeingDeleted.count {
+                        selectedWords[word].removeLast()//rewrite this
+                    }
+                }
+            }
+        }
+        endOfSelection(square)
+    }
+    
     
     func wordSelectionOver(){
         isWordBeingSelectedCorrect = false
@@ -481,6 +458,9 @@ class GameViewController: UIViewController {
                 currentColor += 1
             }
         }
+        
+        currentlySelectingSquare = false
+        hintsAskedForSoFar = 0
         currentSquare = nil
         currentWord = nil
     }
@@ -580,6 +560,7 @@ class GameViewController: UIViewController {
         squareView.makeViewsFor(borderType, color: color)
     }
     
+    // This function makes for 1 if given 2 aswell
     func makeBordersOfLast(_ squares:Int){
        func makeBordersForSquare(_ square:(Int,Int, BorderType)){
             let i = square.0
@@ -591,13 +572,19 @@ class GameViewController: UIViewController {
         }
         
         let letterCount = selectedWords[currentWord!].count
-
-        if currentWord! >= 0 && letterCount - squares >= 0 && letterCount > 0 {
+        let numberLess = squares - letterCount
+        
+        if currentWord! >= 0 && numberLess <= 0 && letterCount > 0 {
             for i in 0..<squares {
                 makeBordersForSquare(selectedWords[currentWord!][letterCount - 1 - i])
             }
         }
-
+        
+        if currentWord! >= 0 && numberLess > 0 && letterCount > 0 {
+            for i in 0..<squares - numberLess {
+                makeBordersForSquare(selectedWords[currentWord!][letterCount - 1 - i])
+            }
+        }
     }
     
     
@@ -607,7 +594,6 @@ class GameViewController: UIViewController {
         putBorderOnPreviousSquare(square)
         putEndBorderOnCurrentSquare(square)
         makeBordersOfLast(2)
-
         
         let wordCorrect = isWordCorrect(whatWordIsSquareIn(square)!.0)
         if autoCorrectWord {
@@ -648,7 +634,7 @@ class GameViewController: UIViewController {
             let dataWord = answersArray[wordNumber]
 
             if needsTranslation {
-                self.translationText.text = "\(findTranslation(self.currentWord!).capitalized) = \(dataWord.capitalized)"
+                self.translationText.text = "\(findTranslation(currentWord!).capitalized) = \(dataWord.capitalized)"
             } else {
                 if sayIfCorrect {
                     self.translationText.text = "\(dataWord.capitalized) IS CORRECT!"
@@ -695,7 +681,6 @@ class GameViewController: UIViewController {
         } else {
             selectedWords[currentWord!].append(square)
         }
-
         endOfSelection(square)
     }
     
@@ -743,6 +728,8 @@ class GameViewController: UIViewController {
                 } else if (oneBehind == SquarePosition.middleLeft && twoBehind == SquarePosition.belowMiddle) || (oneBehind == SquarePosition.aboveMiddle && twoBehind == SquarePosition.middleRight) {
                     changeBorderTypeTo(BorderType.cornerBottomToRight)
                 }
+            } else {
+                selectedWords[word][letter].2 = BorderType.circle
             }
         }
     }
@@ -768,6 +755,7 @@ class GameViewController: UIViewController {
     func whatIsPreviousSquareIJ(_ square:(Int,Int, BorderType)) -> (Int,Int)? {
         let word = whatWordIsSquareIn(square)!.0
         let letter = whatWordIsSquareIn(square)!.1
+
         if letter > 0 {
             return (selectedWords[word][letter - 1].0, selectedWords[word][letter - 1].1)
         }
@@ -841,6 +829,46 @@ class GameViewController: UIViewController {
         }
         return arrayOfRows
     }
+    
+    
+    
+    @IBAction func onButtonPressed(_ sender: AnyObject) {
+        if scrollView.panGestureRecognizer.minimumNumberOfTouches == 1 {
+            scrollButton.setTitle("Choose", for: UIControlState())
+            scrollView.panGestureRecognizer.minimumNumberOfTouches = 2
+        } else if scrollView.panGestureRecognizer.minimumNumberOfTouches == 2 {
+            scrollButton.setTitle("Scroll", for: UIControlState())
+            scrollView.panGestureRecognizer.minimumNumberOfTouches = 1
+        }
+    }
+    
+    @IBAction func nextLetterButtonPressed(_ sender: AnyObject) {
+        if currentlySelectingSquare == false {
+            var nextWordArray: Array<(Int,Int)> = []
+            
+            if let currentWord = currentWord {
+                nextWordArray = coordsOfAnswersArray[currentWord]
+            } else {
+                nextWordArray = coordsOfAnswersArray[selectedWords.count]
+            }
+            
+            let hintWordCount = nextWordArray.count
+            if hintsAskedForSoFar == hintWordCount {
+                wordSelectionOver()
+            } else {
+                let word = nextWordArray[hintsAskedForSoFar]
+                let square = (word.0, word.1, BorderType.unknown)
+                
+                if hintsAskedForSoFar == 0 {
+                    selectSquare(square, startOfTouch: true)
+                } else if hintsAskedForSoFar < hintWordCount {
+                    selectSquare(square, startOfTouch: false)
+                }
+                hintsAskedForSoFar += 1
+            }
+        }
+    }
+
 }
 
 
@@ -872,6 +900,8 @@ enum BorderType {
     case cornerTopToRight
     case cornerBottomToLeft
     case cornerBottomToRight
+    
+    case circle
     
     case none
     
