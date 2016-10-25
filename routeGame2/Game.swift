@@ -26,5 +26,4 @@ class Game {
         self.maxWordLengthIfNoBigger = maxWordLengthIfNoBigger
         self.dataBeforeTranslation = dataBeforeTranslation
     }
-    
 }

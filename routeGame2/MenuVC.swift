@@ -8,9 +8,9 @@
 
 import UIKit
 
-class MenuViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
-   
+class MenuViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+       
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var titleDescLabel: UILabel!
     @IBOutlet weak var tableView: UITableView!
@@ -37,7 +37,8 @@ class MenuViewController: UIViewController, UITableViewDelegate, UITableViewData
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let numberOfCols = Route().numberOfCols
         let numberOfRows = Route().numberOfRows
-        let routeCoOrds = Route().getRoute(Int(arc4random_uniform(2)) ,type: Int(arc4random_uniform(4)))!
+        let routeCoOrds = Route().getRoute(Int(arc4random_uniform(2)) ,type: 3)!
+        //Int(arc4random_uniform(4))
 
         let minWordLengthIfNoSmaller = 4
         let maxWordLengthIfNoBigger = 9
@@ -58,7 +59,6 @@ class MenuViewController: UIViewController, UITableViewDelegate, UITableViewData
                 gameViewController.game = sent
             }
         }
-        
     }
     
     

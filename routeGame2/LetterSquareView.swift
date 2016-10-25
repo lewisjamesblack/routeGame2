@@ -14,7 +14,6 @@ class LetterSquareView: UIView {
     var arrayOfViews: Array<UIView> = []
     var selectingView:UIView
     var lastColor:UIColor?
-//    var hintSubviews:Array<SideView> = []
     
     @IBOutlet weak var letterSquareViewView: LetterSquareViewView!
     @IBOutlet var letterSquareView: UIView!
@@ -41,29 +40,12 @@ class LetterSquareView: UIView {
         return false
     }
     
-//    func makeHint(){
-//        let topView = SideView(type: SideType.top)
-//        let leftView = SideView(type: SideType.left)
-//        let rightView = SideView(type: SideType.right)
-//        let bottomView = SideView(type: SideType.bottom)
-//
-//        hintSubviews = [topView, leftView, rightView, bottomView]
-//        
-//        for subview in hintSubviews {
-//            letterSquareViewView.addSubview(subview)
-//        }
-//    }
-//    
-//    func deleteHint(){
-//        print(letterSquareViewView.subviews)
-//    }
-    
     func changeSelectionColor(_ color: UIColor){
         selectingView.backgroundColor = color
     }
     
     func makeViewsFor(_ borderType: BorderType, color: UIColor) {
-        let subViews = letterSquareViewView.subviews
+        let subViews:Array<UIView> = letterSquareViewView.subviews
         for subview in subViews{
             if (subview is UILabel) {
             } else {
@@ -163,35 +145,25 @@ class LetterSquareView: UIView {
         NSLayoutConstraint.activate([leftContraints, rightContraints, topContraints, bottomContraints])
 
     }
+    
+    func blackOut(){
+        let x = letterSquareViewWidth - 2 * squareViewSelectionWidth
+        let blackOut = UIView(frame: CGRect(x: squareViewSelectionWidth, y: squareViewSelectionWidth, width: x, height: x))
+        blackOut.backgroundColor = blackOutColour
+        blackOut.tag = blackOutTag
+        letterSquareViewView.addSubview(blackOut)
+    }
+    
+    func unBlackOut(){
+        let subViews:Array<UIView> = letterSquareViewView.subviews
+        
+        for subview in subViews{
+            if subview.tag == blackOutTag {
+                subview.removeFromSuperview()
+            }
+        }
+    }
+    
 }
 
-//enum SideType {
-//    case top
-//    case left
-//    case right
-//    case bottom
-//}
-//
-//class SideView:UIView {
-//    
-//    init(type:SideType){
-//        let offset = (1 - letterSquareViewWidthPercentage)/2
-//        let width = letterSquareViewWidth * offset
-//        let length = letterSquareViewWidth * letterSquareViewWidthPercentage
-//        var frame: CGRect
-//        switch type {
-//        case SideType.top: frame = CGRect(x: width, y: width, width: length, height: 1)
-//        case SideType.left: frame = CGRect(x: width, y: width, width: 1, height: length)
-//        case SideType.right: frame = CGRect(x: length + width, y: width, width: 1, height: length + 1)
-//        case SideType.bottom: frame = CGRect(x: width, y: width + length, width: length, height: 1)
-//        }
-//        super.init(frame: frame)
-//        self.backgroundColor = UIColor.black
-//
-//
-//    }
-//    required init?(coder aDecoder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
-//}
 

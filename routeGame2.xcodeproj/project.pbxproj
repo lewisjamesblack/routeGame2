@@ -9,8 +9,13 @@
 /* Begin PBXBuildFile section */
 		755047DF1D6F62AE00C39773 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 755047DE1D6F62AE00C39773 /* Enums.swift */; };
 		755844431D65B71A00DCB1CB /* CharacterGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 755844421D65B71A00DCB1CB /* CharacterGridView.swift */; };
+		757C86821DBBFA9B00F808F7 /* GVCBorders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 757C86811DBBFA9B00F808F7 /* GVCBorders.swift */; };
+		757C86841DBBFBA100F808F7 /* GVCDelete.swift in Sources */ = {isa = PBXBuildFile; fileRef = 757C86831DBBFBA100F808F7 /* GVCDelete.swift */; };
+		757C86861DBBFC2B00F808F7 /* GVCEstablish.swift in Sources */ = {isa = PBXBuildFile; fileRef = 757C86851DBBFC2B00F808F7 /* GVCEstablish.swift */; };
+		757C86881DBBFD5800F808F7 /* GVCSelect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 757C86871DBBFD5800F808F7 /* GVCSelect.swift */; };
+		757C868A1DBBFE5800F808F7 /* GVCEnd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 757C86891DBBFE5800F808F7 /* GVCEnd.swift */; };
 		757E437D1D6F29BB00BA9904 /* Route.swift in Sources */ = {isa = PBXBuildFile; fileRef = 757E437C1D6F29BB00BA9904 /* Route.swift */; };
-		75866EE11D799B1700866911 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75866EE01D799B1700866911 /* MenuViewController.swift */; };
+		75866EE11D799B1700866911 /* MenuVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75866EE01D799B1700866911 /* MenuVC.swift */; };
 		75866EF21D79A58300866911 /* SF-UI-Text-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 75866EE41D79A58300866911 /* SF-UI-Text-Bold.otf */; };
 		75866EF31D79A58300866911 /* SF-UI-Text-BoldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 75866EE51D79A58300866911 /* SF-UI-Text-BoldItalic.otf */; };
 		75866EF41D79A58300866911 /* SF-UI-Text-Heavy.otf in Resources */ = {isa = PBXBuildFile; fileRef = 75866EE61D79A58300866911 /* SF-UI-Text-Heavy.otf */; };
@@ -27,7 +32,7 @@
 		75866EFF1D79A58300866911 /* SF-UI-Text-UltrathinItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 75866EF11D79A58300866911 /* SF-UI-Text-UltrathinItalic.otf */; };
 		75866F031D79AC5600866911 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75866F021D79AC5600866911 /* Game.swift */; };
 		75E8085C1D65A55A00A2F3B8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75E8085B1D65A55A00A2F3B8 /* AppDelegate.swift */; };
-		75E8085E1D65A55A00A2F3B8 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75E8085D1D65A55A00A2F3B8 /* GameViewController.swift */; };
+		75E8085E1D65A55A00A2F3B8 /* GVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75E8085D1D65A55A00A2F3B8 /* GVC.swift */; };
 		75E808611D65A55A00A2F3B8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 75E8085F1D65A55A00A2F3B8 /* Main.storyboard */; };
 		75E808641D65A55A00A2F3B8 /* routeGame2.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 75E808621D65A55A00A2F3B8 /* routeGame2.xcdatamodeld */; };
 		75E808661D65A55A00A2F3B8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 75E808651D65A55A00A2F3B8 /* Assets.xcassets */; };
@@ -62,8 +67,13 @@
 /* Begin PBXFileReference section */
 		755047DE1D6F62AE00C39773 /* Enums.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
 		755844421D65B71A00DCB1CB /* CharacterGridView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacterGridView.swift; sourceTree = "<group>"; };
+		757C86811DBBFA9B00F808F7 /* GVCBorders.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GVCBorders.swift; sourceTree = "<group>"; };
+		757C86831DBBFBA100F808F7 /* GVCDelete.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GVCDelete.swift; sourceTree = "<group>"; };
+		757C86851DBBFC2B00F808F7 /* GVCEstablish.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GVCEstablish.swift; sourceTree = "<group>"; };
+		757C86871DBBFD5800F808F7 /* GVCSelect.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GVCSelect.swift; sourceTree = "<group>"; };
+		757C86891DBBFE5800F808F7 /* GVCEnd.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GVCEnd.swift; sourceTree = "<group>"; };
 		757E437C1D6F29BB00BA9904 /* Route.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Route.swift; sourceTree = "<group>"; };
-		75866EE01D799B1700866911 /* MenuViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
+		75866EE01D799B1700866911 /* MenuVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuVC.swift; sourceTree = "<group>"; };
 		75866EE41D79A58300866911 /* SF-UI-Text-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-UI-Text-Bold.otf"; sourceTree = "<group>"; };
 		75866EE51D79A58300866911 /* SF-UI-Text-BoldItalic.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-UI-Text-BoldItalic.otf"; sourceTree = "<group>"; };
 		75866EE61D79A58300866911 /* SF-UI-Text-Heavy.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SF-UI-Text-Heavy.otf"; sourceTree = "<group>"; };
@@ -81,7 +91,7 @@
 		75866F021D79AC5600866911 /* Game.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
 		75E808581D65A55A00A2F3B8 /* routeGame2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = routeGame2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		75E8085B1D65A55A00A2F3B8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		75E8085D1D65A55A00A2F3B8 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
+		75E8085D1D65A55A00A2F3B8 /* GVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GVC.swift; sourceTree = "<group>"; };
 		75E808601D65A55A00A2F3B8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		75E808631D65A55A00A2F3B8 /* routeGame2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = routeGame2.xcdatamodel; sourceTree = "<group>"; };
 		75E808651D65A55A00A2F3B8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -229,8 +239,13 @@
 		75E8088E1D65A6AA00A2F3B8 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				75E8085D1D65A55A00A2F3B8 /* GameViewController.swift */,
-				75866EE01D799B1700866911 /* MenuViewController.swift */,
+				75866EE01D799B1700866911 /* MenuVC.swift */,
+				75E8085D1D65A55A00A2F3B8 /* GVC.swift */,
+				757C86851DBBFC2B00F808F7 /* GVCEstablish.swift */,
+				757C86871DBBFD5800F808F7 /* GVCSelect.swift */,
+				757C86831DBBFBA100F808F7 /* GVCDelete.swift */,
+				757C86811DBBFA9B00F808F7 /* GVCBorders.swift */,
+				757C86891DBBFE5800F808F7 /* GVCEnd.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -389,11 +404,16 @@
 				75E808641D65A55A00A2F3B8 /* routeGame2.xcdatamodeld in Sources */,
 				75E808921D65A9EC00A2F3B8 /* LetterSquareView.swift in Sources */,
 				75866F031D79AC5600866911 /* Game.swift in Sources */,
+				757C86841DBBFBA100F808F7 /* GVCDelete.swift in Sources */,
+				757C86881DBBFD5800F808F7 /* GVCSelect.swift in Sources */,
+				757C86821DBBFA9B00F808F7 /* GVCBorders.swift in Sources */,
 				757E437D1D6F29BB00BA9904 /* Route.swift in Sources */,
+				757C868A1DBBFE5800F808F7 /* GVCEnd.swift in Sources */,
 				75E808961D65B08300A2F3B8 /* Data.swift in Sources */,
-				75E8085E1D65A55A00A2F3B8 /* GameViewController.swift in Sources */,
+				757C86861DBBFC2B00F808F7 /* GVCEstablish.swift in Sources */,
+				75E8085E1D65A55A00A2F3B8 /* GVC.swift in Sources */,
 				75E8085C1D65A55A00A2F3B8 /* AppDelegate.swift in Sources */,
-				75866EE11D799B1700866911 /* MenuViewController.swift in Sources */,
+				75866EE11D799B1700866911 /* MenuVC.swift in Sources */,
 				75E8089A1D65B11300A2F3B8 /* Extensions.swift in Sources */,
 				75E8089C1D65B13B00A2F3B8 /* Constants.swift in Sources */,
 				755844431D65B71A00DCB1CB /* CharacterGridView.swift in Sources */,
@@ -550,6 +570,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = routeGame2/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_SWIFT_FLAGS = "-Xfrontend -debug-time-function-bodies";
 				PRODUCT_BUNDLE_IDENTIFIER = com.lewisblack.routeGameSecond;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -565,6 +586,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = routeGame2/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_SWIFT_FLAGS = "-Xfrontend -debug-time-function-bodies";
 				PRODUCT_BUNDLE_IDENTIFIER = com.lewisblack.routeGameSecond;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";

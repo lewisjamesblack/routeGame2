@@ -53,7 +53,7 @@ class CharacterGridView: UIView {
             }
             arrayOfRows.append(arrayOfViewsInRow)
         }
-    }    
+    }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         NotificationCenter.default.post(name: Notification.Name(rawValue: TOUCH_BEGAN), object: touches)
