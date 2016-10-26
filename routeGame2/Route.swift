@@ -15,7 +15,16 @@ class Route {
     let numberOfRows = 13
     
     
-    
+    /**
+     Makes a route
+     
+     - Parameters:
+          - number: Which route.
+          - type: Diagonal/Switched etc, out of 4.
+     
+     
+     - Returns: Array of Co-ordinates.
+     */
     func getRoute(_ number:Int, type:Int) -> Array<(Int,Int)>? {
         
         let routes:Array<Array<(Int,Int)>> = [

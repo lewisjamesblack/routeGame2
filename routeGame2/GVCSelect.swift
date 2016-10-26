@@ -11,7 +11,10 @@ import UIKit
 extension GameViewController {
 
     func selectSquare(_ square:(Int,Int, BorderType), startOfTouch: Bool){
-        if startOfTouch {
+        
+        unblackOutLetters()
+        
+        if startOfTouch || currentWord == nil {
             if selectedWords.count == 0 {
                 selectedWords = [[square]]
             } else  {
@@ -21,10 +24,13 @@ extension GameViewController {
         } else {
             selectedWords[currentWord!].append(square)
         }
+        
         endOfSelection(square)
+        
     }
     
     func endOfSelection(_ square:(Int,Int, BorderType)){
+        
         putBorderOnPreviousSquare(square)
         putEndBorderOnCurrentSquare(square)
         makeBordersOfLast(2)
@@ -78,6 +84,7 @@ extension GameViewController {
                 translationText.text = "You have completed the quiz!"
             }
         }
+        
     }
 
 

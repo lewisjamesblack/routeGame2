@@ -147,6 +147,7 @@ class LetterSquareView: UIView {
     }
     
     func blackOut(){
+
         let x = letterSquareViewWidth - 2 * squareViewSelectionWidth
         let blackOut = UIView(frame: CGRect(x: squareViewSelectionWidth, y: squareViewSelectionWidth, width: x, height: x))
         blackOut.backgroundColor = blackOutColour
@@ -155,6 +156,7 @@ class LetterSquareView: UIView {
     }
     
     func unBlackOut(){
+
         let subViews:Array<UIView> = letterSquareViewView.subviews
         
         for subview in subViews{

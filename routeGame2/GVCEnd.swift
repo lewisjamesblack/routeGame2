@@ -28,6 +28,10 @@ extension GameViewController {
             
         }
         
+        unblackOutLetters()
+        
+        blackOutLetter()
+        
         currentlySelectingSquare = false
         hintsAskedForSoFar = 0
         currentSquare = nil
@@ -35,9 +39,6 @@ extension GameViewController {
     }
     
     func wordSelectedCorrect() {
-        unblackOutLetters()
-        blackOutLetter()
-        
         hintViewHeight.constant = 0
         hintPressedOdd = false
         sameCurrentWord = false
@@ -46,8 +47,8 @@ extension GameViewController {
     
     
     func blackOutLetter(){
-        if blackOutWrongWords {
-
+        
+        if blackOutWrongWords && selectedWords.count != numberOfWords && selectedWords.count != 0 {
             currentlyBlackOut = findLettersToBlack()
             
             for i in stride(from: currentlyBlackOut.count - 1, through: 0, by: -1){
@@ -59,6 +60,7 @@ extension GameViewController {
     
     func unblackOutLetters() {
         if blackOutWrongWords {
+
             for i in stride(from: currentlyBlackOut.count - 1, through: 0, by: -1){
                 let square = currentlyBlackOut[i]
                 arrayOfRows[square.0][square.1].unBlackOut()
@@ -69,51 +71,53 @@ extension GameViewController {
     }
 
     func findLettersToBlack() -> Array<(Int,Int)>{
-        if let currentSq = currentSquare {
-            
-            let x:Int = currentSq.0
-            let y:Int = currentSq.1
-            var arrayPossible:Array<(Int,Int)> = [(x,y+1),(x,y-1),(x-1,y),(x+1,y)]
-            var arrayStarters = [(Int,Int)]()
-            
-            for i in stride(from: arrayPossible.count - 1, through: 0, by: -1) {
-                let s = arrayPossible[i]
-                if s.0<0 || s.1<0 || s.0 >= Route().numberOfCols || s.1 >= Route().numberOfRows {
-                    arrayPossible.remove(at: i)
-                }
+        
+        let currentWordNumber = selectedWords.count
+        
+        let currentSq = selectedWords.last!.last!
+        
+        let x:Int = currentSq.0
+        let y:Int = currentSq.1
+        var arrayPossible:Array<(Int,Int)> = [(x,y+1),(x,y-1),(x-1,y),(x+1,y)]
+        var arrayStarters = [(Int,Int)]()
+        
+        for i in stride(from: arrayPossible.count - 1, through: 0, by: -1) {
+            let s = arrayPossible[i]
+            if s.0<0 || s.1<0 || s.0 >= Route().numberOfCols || s.1 >= Route().numberOfRows {
+                arrayPossible.remove(at: i)
             }
-            
-            for i in 0..<firstSquares.count {
-                let square = firstSquares[i]
-                for i in stride(from: arrayPossible.count - 1, through: 0, by: -1){
-                    let s = arrayPossible[i]
-                    if s.0 == square.0 && s.1 == square.1 {
-                        arrayStarters.append((s.0,s.1))
-                    }
-                }
-            }
-
-            for i in 0..<selectedWords.count {
-                let letter = selectedWords[i].first!
-                for i in stride(from: arrayStarters.count - 1, through: 0, by: -1){
-                    let s = arrayStarters[i]
-                    if s.0 == letter.0 && s.1 == letter.1 {
-                        arrayStarters.remove(at: i)
-                    }
-                }
-            }
-            
-            if let nextLetter = coordsOfAnswersArray[currentWord! + 1].first {
-                for i in stride(from: arrayStarters.count - 1, through: 0, by: -1){
-                    let s = arrayStarters[i]
-                    if s.0 == nextLetter.0 && s.1 == nextLetter.1 {
-                        arrayStarters.remove(at: i)
-                    }
-                }
-            }
-            return arrayStarters
         }
-        return [(Int,Int)]()
+        
+        for i in 0..<firstSquares.count {
+            let square = firstSquares[i]
+            for i in stride(from: arrayPossible.count - 1, through: 0, by: -1){
+                let s = arrayPossible[i]
+                if s.0 == square.0 && s.1 == square.1 {
+                    arrayStarters.append((s.0,s.1))
+                }
+            }
+        }
+
+        for i in 0..<selectedWords.count {
+            let letter = selectedWords[i].first!
+            for i in stride(from: arrayStarters.count - 1, through: 0, by: -1){
+                let s = arrayStarters[i]
+                if s.0 == letter.0 && s.1 == letter.1 {
+                    arrayStarters.remove(at: i)
+                }
+            }
+        }
+        
+        if let nextLetter = coordsOfAnswersArray[currentWordNumber].first {
+            for i in stride(from: arrayStarters.count - 1, through: 0, by: -1){
+                let s = arrayStarters[i]
+                if s.0 == nextLetter.0 && s.1 == nextLetter.1 {
+                    arrayStarters.remove(at: i)
+                }
+            }
+        }
+        
+        return arrayStarters
     }
     
     

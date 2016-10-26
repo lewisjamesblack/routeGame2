@@ -9,14 +9,14 @@
 import Foundation
 
 class DataCheck {
-    let firstApp = [Data().data1, Data().data2, Data().data5, Data().data6, Data().data11, Data().data12, Data().data15]
+    let firstApp = [Data().data1, Data().data2, Data().data5, Data().data6, Data().data11, Data().data15, Data().data14]
 }
 
 class Data {
     
     //Data,translation, title, hint
     
-    let data1 = ["Rome, Home of the Coliseum, Stockholm, Capital of Sweden, Vienna, Capital of Austria, Minsk, Capital of Belarus - Where Phoebes boyfriend David goes in Friends, Brussels, Capital of Belgium, Sarajevo, Capital of Bosnia, Bern, Capital of Switzerland, Zagreb, Capital of Croatia, Prague, Capital of Czech Republic, Copenhagen, Capital of Denmark, Tallinn , Capital of Estonia - Has a double L and a double N, Helsinki, Capital of Finland, Paris, Home of the Eiffel Tower, Madrid, Capital of Spain, Berlin, Once divided by a wall separating East and West, Athens, Capital of Greece - Home of the Pantheon, Monaco, Capital of small Mediterranean city state which it shares the name of, Reykjavik, Capital of Iceland, Amsterdam, Famous for it's canals and red light district, Oslo, Capital of Norway, Warsaw, Capital of Poland, Lisbon, Capital of Portugal, Bucharest, Capital of Romania, Bratislava, Capital of Slovakia, Moscow, Capital of Russia", false, "Capitals of Europe", true] as [Any]
+    let data1 = ["Rome, Home of the Coliseum, Stockholm, Capital of Sweden, Vienna, Capital of Austria, Minsk, Capital of Belarus - Where Phoebes boyfriend David goes in Friends, Brussels, Capital of Belgium, Sarajevo, Capital of Bosnia, Bern, Capital of Switzerland, Zagreb, Capital of Croatia, Prague, Capital of Czech Republic, Copenhagen, Capital of Denmark,Helsinki, Capital of Finland, Paris, Home of the Eiffel Tower, Madrid, Capital of Spain, Dublin, Capital of the Republic of Ireland, Athens, Capital of Greece - Home of the Pantheon, Monaco, Capital of small Mediterranean city state which it shares the name of, Reykjavik, Capital of Iceland, Amsterdam, Famous for it's canals and red light district, Oslo, Capital of Norway, Warsaw, Capital of Poland, Lisbon, Capital of Portugal, Bucharest, Capital of Romania, Bratislava, Capital of Slovakia, Moscow, Capital of Russia, Tallinn , Capital of Estonia - Has a double L and a double N ", false, "Capitals of Europe", true] as [Any]
     
     let data2 = ["Arizona, Arkansas, Connecticut, Delaware, Idaho, Indiana, Iowa, NewHampshire, Louisiana, Maine, Oklahoma, Maryland, Michigan, Minnesota, Missouri, Ohio, Utah, Virginia, Washington, Wisconsin, Wyoming, California", false, "American States", false] as [Any]
     
@@ -26,7 +26,7 @@ class Data {
     
     let data5 = ["France, Belgium, Netherlands, Spain, Czech Republic, Luxemburg, Denmark, United States, Switzerland, Jersey, Norway, Hungary, Slovakia, Italy, Vatican City, Slovenia, Croatia, Morocco, United Arab Emirates, India", false, "Countries In Order Lewis Visited Them", false] as [Any]
     
-    let data6 = ["die Pommes, Chips, der Reis, Rice, die Nudel, Pasta, der Kaffee, Coffee, der Thunfisch, Tuna, der Lachs, Salmon,  das Mehl, Flour, der Honig, Honey, die Nuss, Nut, das Brot, Bread, der Käse, Cheese, die Zwiebel, Onion,  die Bohnen, Beans, die Erbsen, Peas, die Kartoffel, Potato, die Zucchini, Courgette, die Paprika, Pepper, der Speck, Bacon, das Hähnchen, Chicken", true, "German food", false ] as [Any]
+    let data6 = ["die Pommes, Chips, der Reis, Rice, die Nudel, Pasta, der Kaffee, Coffee, der Thunfisch, Tuna, der Lachs, Salmon,  das Mehl, Flour, der Honig, Honey, die Nuss, Nut, das Brot, Bread, der Käse, Cheese, die Zwiebel, Onion,  die Bohnen, Beans, die Erbsen, Peas, die Kartoffel, Potato, die Zucchini, Courgette, die Paprika, Pepper, der Speck, Bacon, das Hähnchen, Chicken", true, "German Food", false ] as [Any]
     
     let data7 = ["Pommes, Chips, Reis, Rice, Nudel, Pasta, Kaffee, Coffee, Thunfisch, Tuna, Lachs, Salmon, Mehl, Flour, Honig, Honey, Nuss, Nut, Brot, Bread,Käse, Cheese, Zwiebel, Onion, Bohnen, Beans, Erbsen, Peas, Kartoffel, Potato, Zucchini, Courgette, Paprika, Pepper, Speck, Bacon, Hähnchen, Chicken, Pfefferminztee, Peppermint Tea, Schweinefleisch, Pork, Öl, Oil, Knoblauch, Garlic, Wassermelone, Watermelon, Birne, Pear", true, "German Food", false ] as [Any]
     
@@ -38,7 +38,7 @@ class Data {
     
     let data11 = ["Argentina, Bolivia, Brazil, Chile, Colombia, Ecuador, Mexico, Guyana, Paraguay, Peru,  Uruguay, Venezuela, Belize, Costa Rica, El Salvador, French Guiana, Guatemala, Honduras, Panama, United States Of America, Canada", false, "Countries Of Mainland America", false] as [Any] // except nicauragua and suriname all of mainland america
     
-    let data12 = ["Cambodia, Cameroon, Canada, Cape Verde, Cayman Islands, Central African Republic, Chad, Chile, Colombia, Comoros, Democratic Republic of the Congo, Costa Rica, Cote d'Ivoire, Croatia, Cuba, Cyprus, Czech Republic", false, "Countries Beginning With 'C'", false] as [Any] // except china
+    let data12 = ["Cambodia, Cameroon, Canada, Cape Verde, Cayman Islands, Central African Republic, Chad, Chile, Colombia, Comoros, Democratic Republic Congo, China, Costa Rica, Cote d'Ivoire, Croatia, Cuba, Cyprus, Czech Republic", false, "Countries Beginning With 'C'", false] as [Any]
     
     let data13 = ["Samoa, San Marino, Saudi Arabia, Senegal, Serbia, Seychelles, Singapore, Slovakia, Slovenia, Solomon Islands, Somalia, South Africa, Spain, Sri Lanka, St Lucia, Sudan, Suriname, Swaziland, Sweden, Switzerland, Syria", false, "Countries Beginning With 'S'", false] as [Any] //except a few st kitts, st vincent and more
 

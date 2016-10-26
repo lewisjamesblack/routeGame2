@@ -18,6 +18,7 @@ extension GameViewController {
     }
     
     func whatIsSquare(_ square:(Int,Int, BorderType)) -> (Square,BorderType) {
+        
         if isSquareSelected(square).0 {
             if isSelectedSquareInCurrentWord(square) {
                 return (Square.selectedInCurrentWord, isSquareSelected(square).1)

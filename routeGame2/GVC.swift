@@ -54,6 +54,7 @@ class GameViewController: UIViewController {
     var score:Int = 0
     var firstSquares = [(Int,Int)]()
     var currentlyBlackOut = [(Int,Int)]()
+    var numberOfWords:Int?
     
     //Options
     
@@ -73,7 +74,7 @@ class GameViewController: UIViewController {
     var stopSelectingIfWordCorrect:Bool = true
     var autoCorrectWord:Bool = true
     var onlySelectSurroundingLetters:Bool = true //basically only select the letters above/below/sides of last letter
-    var blackOutWrongWords:Bool = true 
+    var blackOutWrongWords:Bool = true // only works when route is in definite order
     
     
     override func viewDidLoad() {
@@ -132,7 +133,6 @@ class GameViewController: UIViewController {
         
         wordsFound = [Bool](repeating: false, count: answersArray.count)
         
-        
         var wordStart:Int = 0
         for i in 0..<answersArray.count{
             let wordLength = answersArray[i].characters.count
@@ -141,6 +141,9 @@ class GameViewController: UIViewController {
             firstSquares.append(routeCoOrds[wordStart])
             wordStart += wordLength
         }
+        
+        numberOfWords = coordsOfAnswersArray.count
+
         
         //Make Grid
         
@@ -280,16 +283,6 @@ class GameViewController: UIViewController {
         return true
     }
     
-       
-    
-    
-    
-    
-    
-    
-    
-    
-    
     func routeArrayOfRows(_ array: [(Int,Int)], numberOfRows: Int , numberOfCols: Int) -> [[Int]] {
         var arrayOfRows = [[Int]](repeating: [Int](repeating: 0, count: numberOfCols), count: numberOfRows)
         for m in 0...array.count-1 {
@@ -377,6 +370,7 @@ class GameViewController: UIViewController {
         updateScoreButton()
     }
     
+    
     @IBAction func nextLetterButtonPressed(_ sender: AnyObject) {
         if currentlySelectingSquare == false {
             var nextWordArray: Array<(Int,Int)> = []
@@ -408,7 +402,6 @@ class GameViewController: UIViewController {
     }
 
 }
-
 
 
 
