@@ -78,6 +78,12 @@ class GameViewController: UIViewController {
     
     
     override func viewDidLoad() {
+        
+        func printIt() {
+            print("print")
+        }
+        printIt()
+        
         super.viewDidLoad()
         //Calculate Constants
 
